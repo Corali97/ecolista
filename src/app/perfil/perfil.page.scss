@@ -1,10 +1,29 @@
-.home-content {
+.perfil-content {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.summary-grid {
+.profile-card ion-avatar {
+  width: 64px;
+  height: 64px;
+  margin-right: 1rem;
+  background: rgba(var(--ion-color-success-rgb), 0.15);
+}
+
+.profile-avatar ion-icon {
+  font-size: 3rem;
+  color: var(--ion-color-success);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
@@ -12,31 +31,13 @@
 
   h3 {
     margin: 0;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: var(--ion-color-success);
   }
 
   p {
     margin: 0;
     color: var(--ion-color-medium);
-  }
-}
-
-.alerts-card ion-item {
-  border-radius: 0.75rem;
-  margin-bottom: 0.5rem;
-  --background: rgba(var(--ion-color-warning-rgb), 0.08);
-}
-
-.actions-card .actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-@media (min-width: 576px) {
-  .actions-card .actions {
-    flex-direction: row;
   }
 }
 

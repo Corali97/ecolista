@@ -1,0 +1,28 @@
+.login-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.logo-area {
+  text-align: center;
+  color: var(--ion-color-success);
+
+  .logo-icon {
+    font-size: 3rem;
+  }
+
+  h1 {
+    margin: 0.5rem 0 0;
+  }
+
+  p {
+    margin-top: 0.25rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+ion-card {
+  box-shadow: none;
+  border-radius: 1rem;
+}

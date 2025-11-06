@@ -1,20 +1,94 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      EcoLista
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/perfil" fill="clear">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding home-content">
+  <ion-card #welcomeCard>
+    <ion-card-header>
+      <ion-card-title>Bienvenida/o a tu compra consciente</ion-card-title>
+      <ion-card-subtitle>
+        Gestiona tus alimentos frescos, evita desperdicios y ahorra tiempo cada semana.
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" color="success" (click)="goToList()">
+        <ion-icon slot="start" name="leaf"></ion-icon>
+        Ver EcoLista
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-card *ngIf="summary$ | async as summary">
+    <ion-card-header>
+      <ion-card-title>Resumen rápido</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="summary-grid">
+        <div>
+          <h3>{{ summary.total }}</h3>
+          <p>Productos registrados</p>
+        </div>
+        <div>
+          <h3>{{ summary.nearExpiry }}</h3>
+          <p>Por vencer en 3 días</p>
+        </div>
+        <div>
+          <h3>{{ summary.purchased }}</h3>
+          <p>Comprados recientemente</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="alerts-card" *ngIf="nearExpiry$ | async as alerts">
+    <ion-card-header>
+      <ion-card-title>Recomendaciones sostenibles</ion-card-title>
+      <ion-card-subtitle>Prioriza estos alimentos para evitar desperdicios.</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list lines="none" *ngIf="alerts.length; else emptyAlerts">
+        <ion-item *ngFor="let product of alerts">
+          <ion-icon slot="start" name="alarm-outline" color="warning"></ion-icon>
+          <ion-label>
+            <h3>{{ product.name }}</h3>
+            <p>Vence en {{ product.expiry }}</p>
+          </ion-label>
+          <ion-chip color="warning" outline>
+            <ion-label>{{ product.priority }}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+      <ng-template #emptyAlerts>
+        <p class="empty-state">Sin alertas por ahora. ¡Disfruta tus alimentos frescos!</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="actions-card">
+    <ion-card-header>
+      <ion-card-title>Acciones rápidas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="actions">
+        <ion-button routerLink="/lista" color="primary" fill="outline">
+          <ion-icon slot="start" name="cart-outline"></ion-icon>
+          Gestionar EcoLista
+        </ion-button>
+        <ion-button routerLink="/perfil" color="tertiary" fill="outline">
+          <ion-icon slot="start" name="trophy-outline"></ion-icon>
+          Ver logros
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

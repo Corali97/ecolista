@@ -1,0 +1,159 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>EcoLista</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/perfil" fill="clear">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding lista-content">
+  <ion-card #formCard>
+    <ion-card-header>
+      <ion-card-title>Añadir producto</ion-card-title>
+      <ion-card-subtitle>Registra alimentos frescos y evita desperdicios.</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form [formGroup]="productForm" (ngSubmit)="addProduct()" novalidate>
+        <ion-list lines="full">
+          <ion-item>
+            <ion-label position="stacked">Nombre del producto</ion-label>
+            <ion-input placeholder="Ej. Manzanas orgánicas" formControlName="name"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="productForm.controls.name.touched && productForm.controls.name.invalid">
+            Indica un nombre para identificar el producto.
+          </ion-note>
+
+          <ion-item>
+            <ion-label position="stacked">Categoría</ion-label>
+            <ion-select formControlName="category" interface="popover">
+              <ion-select-option value="Verduras">Verduras</ion-select-option>
+              <ion-select-option value="Vegetales">Vegetales</ion-select-option>
+              <ion-select-option value="Frutas">Frutas</ion-select-option>
+              <ion-select-option value="Lácteos">Lácteos</ion-select-option>
+              <ion-select-option value="Cereales">Cereales</ion-select-option>
+              <ion-select-option value="Proteínas">Proteínas</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Cantidad</ion-label>
+            <ion-input type="number" min="1" formControlName="quantity"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Unidad</ion-label>
+            <ion-input placeholder="piezas, kg, litros…" formControlName="unit"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Fecha de vencimiento</ion-label>
+            <ion-input type="date" formControlName="expiry"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Prioridad</ion-label>
+            <ion-segment formControlName="priority">
+              <ion-segment-button value="Alta">Alta</ion-segment-button>
+              <ion-segment-button value="Media">Media</ion-segment-button>
+              <ion-segment-button value="Baja">Baja</ion-segment-button>
+            </ion-segment>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-label position="stacked">Notas</ion-label>
+            <ion-textarea auto-grow="true" formControlName="notes" placeholder="Ideas de recetas o recordatorios"></ion-textarea>
+          </ion-item>
+        </ion-list>
+
+        <ion-button type="submit" expand="block" class="ion-margin-top">
+          <ion-icon slot="start" name="add-circle"></ion-icon>
+          Añadir a EcoLista
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="alerts-card" *ngIf="(soonToExpire$ | async) as soon">
+    <ion-card-header>
+      <ion-card-title>Alimentos por vencer</ion-card-title>
+      <ion-card-subtitle>{{ soon.length }} productos requieren atención</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list *ngIf="soon.length; else emptyAlert" lines="none">
+        <ion-item *ngFor="let product of soon; trackBy: trackByProductId">
+          <ion-icon slot="start" color="warning" name="alert-circle-outline"></ion-icon>
+          <ion-label>
+            <h3>{{ product.name }}</h3>
+            <p>Vence en {{ daysUntilExpiry(product) }} día(s)</p>
+          </ion-label>
+          <ion-chip color="warning">Prioridad {{ product.priority }}</ion-chip>
+        </ion-item>
+      </ion-list>
+      <ng-template #emptyAlert>
+        <p class="empty-state">Todo en orden. ¡Tus alimentos están frescos!</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="list-header">
+    <h2>Tu EcoLista activa</h2>
+    <p>Marca como comprado o revisa los detalles.</p>
+  </div>
+
+  <ng-container *ngIf="(products$ | async) as products">
+    <ion-card
+      *ngFor="let product of products; trackBy: trackByProductId"
+      [class.product-completed]="product.purchased"
+    >
+      <ion-card-header>
+        <div class="card-header">
+          <ion-card-title>{{ product.name }}</ion-card-title>
+          <ion-chip [color]="getPriorityColor(product)" outline>
+            <ion-icon name="leaf" color="success"></ion-icon>
+            <ion-label>{{ product.priority }}</ion-label>
+          </ion-chip>
+        </div>
+        <ion-card-subtitle>
+          {{ product.quantity }} {{ product.unit }} · {{ product.category }}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="card-info">
+          <span>
+            <ion-icon name="time-outline"></ion-icon>
+            {{ product.purchased ? 'Comprado' : 'Vence en ' + daysUntilExpiry(product) + ' día(s)' }}
+          </span>
+          <span>
+            <ion-icon name="earth-outline"></ion-icon>
+            Eco-score {{ product.ecoScore }}
+          </span>
+        </div>
+        <p *ngIf="product.notes" class="notes">{{ product.notes }}</p>
+
+        <div class="actions">
+          <ion-button size="small" fill="clear" (click)="togglePurchased(product)">
+            <ion-icon slot="start" name="checkmark-done"></ion-icon>
+            {{ product.purchased ? 'Desmarcar' : 'Marcar comprado' }}
+          </ion-button>
+          <ion-button size="small" [routerLink]="['/detalle', product.id]" color="tertiary">
+            <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+            Detalles
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <p *ngIf="!products.length" class="empty-state">
+      Todavía no tienes productos. ¡Añade alimentos ecológicos a tu lista!
+    </p>
+  </ng-container>
+</ion-content>

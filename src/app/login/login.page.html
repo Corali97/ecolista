@@ -1,0 +1,58 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-title>EcoLista</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding login-content">
+  <div class="logo-area">
+    <ion-icon name="leaf" class="logo-icon"></ion-icon>
+    <h1>EcoLista</h1>
+    <p>Organiza tus compras de manera responsable y sin desperdicios.</p>
+  </div>
+
+  <ion-card>
+    <form [formGroup]="loginForm" (ngSubmit)="submit()">
+      <ion-card-header>
+        <ion-card-title>Ingresa</ion-card-title>
+        <ion-card-subtitle>Controla tus alimentos y fechas de vencimiento.</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-label position="stacked">Correo electrónico</ion-label>
+            <ion-input
+              type="email"
+              placeholder="tu@email.com"
+              formControlName="email"
+              inputmode="email"
+              autocomplete="email"
+            ></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="emailControl?.touched && emailControl?.invalid">
+            Ingresa un correo válido.
+          </ion-note>
+
+          <ion-item>
+            <ion-label position="stacked">Contraseña</ion-label>
+            <ion-input
+              type="password"
+              placeholder="Mínimo 6 caracteres"
+              formControlName="password"
+              autocomplete="current-password"
+            ></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="passwordControl?.touched && passwordControl?.invalid">
+            La contraseña debe tener al menos 6 caracteres.
+          </ion-note>
+        </ion-list>
+
+        <ion-button expand="block" type="submit" [disabled]="isSubmitting">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          {{ isSubmitting ? 'Ingresando…' : 'Entrar' }}
+        </ion-button>
+      </ion-card-content>
+    </form>
+  </ion-card>
+</ion-content>
