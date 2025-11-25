@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AnimationController, ToastController } from '@ionic/angular';
@@ -15,6 +15,11 @@ import { ProductService } from '../services/product.service';
 export class ListaPage {
   @ViewChild('formCard', { read: ElementRef }) formCard?: ElementRef<HTMLIonCardElement>;
 
+  private readonly fb = inject(FormBuilder);
+  private readonly productService = inject(ProductService);
+  private readonly toastController = inject(ToastController);
+  private readonly animationCtrl = inject(AnimationController);
+
   readonly products$: Observable<Product[]> = this.productService.products$;
   readonly soonToExpire$: Observable<Product[]> = this.productService.getSoonToExpire$();
 
@@ -27,13 +32,6 @@ export class ListaPage {
     priority: ['Alta', Validators.required],
     notes: [''],
   });
-
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly productService: ProductService,
-    private readonly toastController: ToastController,
-    private readonly animationCtrl: AnimationController
-  ) {}
 
   ionViewDidEnter(): void {
     this.playScaleAnimation();

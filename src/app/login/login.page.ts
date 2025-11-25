@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
@@ -10,18 +10,16 @@ import { ToastController } from '@ionic/angular';
   standalone: false,
 })
 export class LoginPage {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly toastController = inject(ToastController);
+
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   isSubmitting = false;
-
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly router: Router,
-    private readonly toastController: ToastController
-  ) {}
 
   async submit(): Promise<void> {
     if (this.loginForm.invalid) {

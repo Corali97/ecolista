@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AnimationController } from '@ionic/angular';
@@ -15,14 +15,12 @@ import { ProductService } from '../services/product.service';
 export class HomePage {
   @ViewChild('welcomeCard', { read: ElementRef }) welcomeCard?: ElementRef<HTMLIonCardElement>;
 
+  private readonly productService = inject(ProductService);
+  private readonly animationCtrl = inject(AnimationController);
+  private readonly router = inject(Router);
+
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
-
-  constructor(
-    private readonly productService: ProductService,
-    private readonly animationCtrl: AnimationController,
-    private readonly router: Router
-  ) {}
 
   ionViewDidEnter(): void {
     if (!this.welcomeCard) {

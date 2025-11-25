@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, switchMap } from 'rxjs';
 import { AlertController } from '@ionic/angular';
@@ -13,6 +13,10 @@ import { ProductService } from '../services/product.service';
   standalone: false,
 })
 export class DetallePage {
+  private readonly route = inject(ActivatedRoute);
+  private readonly productService = inject(ProductService);
+  private readonly alertController = inject(AlertController);
+
   readonly product$: Observable<Product | undefined> = this.route.paramMap.pipe(
     map((params) => Number(params.get('id'))),
     switchMap((id) => this.productService.getProductById$(id))
@@ -21,12 +25,6 @@ export class DetallePage {
   readonly suggestions$: Observable<Product[]> = this.productService.products$.pipe(
     map((products) => products.filter((product) => product.priority === 'Alta').slice(0, 3))
   );
-
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly productService: ProductService,
-    private readonly alertController: AlertController
-  ) {}
 
   daysUntil(expiry: string): number {
     return this.productService.daysUntilExpiry(expiry);

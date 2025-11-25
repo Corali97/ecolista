@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Product } from '../models/product';
@@ -11,6 +11,8 @@ import { ProductService } from '../services/product.service';
   standalone: false,
 })
 export class PerfilPage {
+  private readonly productService = inject(ProductService);
+
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
 
@@ -27,5 +29,4 @@ export class PerfilPage {
     },
   ];
 
-  constructor(private readonly productService: ProductService) {}
 }
