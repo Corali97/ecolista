@@ -17,11 +17,16 @@
         <div>
           <h2>María López</h2>
           <p>Compradora consciente desde 2024</p>
+          <ion-badge color="success" *ngIf="session$ | async as session">{{ session.email }}</ion-badge>
         </div>
       </div>
       <ion-button routerLink="/lista" expand="block" color="success">
         <ion-icon slot="start" name="cart-outline"></ion-icon>
         Ver EcoLista
+      </ion-button>
+      <ion-button expand="block" color="medium" (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Cerrar sesión segura
       </ion-button>
     </ion-card-content>
   </ion-card>

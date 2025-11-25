@@ -13,6 +13,19 @@
 </ion-header>
 
 <ion-content class="ion-padding lista-content">
+  <ion-card *ngIf="(syncStatus$ | async) as sync" color="light">
+    <ion-card-content class="status-row">
+      <ion-chip [color]="sync.offline ? 'warning' : 'success'" outline>
+        <ion-icon name="cloud-download-outline"></ion-icon>
+        <ion-label>{{ sync.message }}</ion-label>
+      </ion-chip>
+      <ion-button size="small" fill="clear" (click)="syncFromApi()">
+        <ion-icon name="refresh"></ion-icon>
+        Sincronizar API
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
   <ion-card #formCard>
     <ion-card-header>
       <ion-card-title>Añadir producto</ion-card-title>

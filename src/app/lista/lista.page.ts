@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AnimationController, ToastController } from '@ionic/angular';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import { Product } from '../models/product';
 import { ProductService } from '../services/product.service';
@@ -22,6 +23,7 @@ export class ListaPage {
 
   readonly products$: Observable<Product[]> = this.productService.products$;
   readonly soonToExpire$: Observable<Product[]> = this.productService.getSoonToExpire$();
+  readonly syncStatus$ = this.productService.syncStatus$;
 
   readonly productForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -35,6 +37,14 @@ export class ListaPage {
 
   ionViewDidEnter(): void {
     this.playScaleAnimation();
+  }
+
+  ionViewWillEnter(): void {
+    void this.productService.refreshProductsFromApi();
+  }
+
+  syncFromApi(): void {
+    void this.productService.refreshProductsFromApi();
   }
 
   async addProduct(): Promise<void> {
@@ -68,11 +78,14 @@ export class ListaPage {
     });
     await toast.present();
 
+    await Haptics.impact({ style: ImpactStyle.Light });
+
     this.playScaleAnimation();
   }
 
   togglePurchased(product: Product): void {
     this.productService.markAsPurchased(product.id, !product.purchased);
+    void Haptics.impact({ style: ImpactStyle.Medium });
   }
 
   getPriorityColor(product: Product): string {
