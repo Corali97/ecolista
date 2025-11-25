@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AnimationController } from '@ionic/angular';
 
 import { Product } from '../models/product';
+import { EcoTipsService, TipsResponse } from '../services/eco-tips.service';
 import { ProductService } from '../services/product.service';
 
 @Component({
@@ -18,9 +19,11 @@ export class HomePage {
   private readonly productService = inject(ProductService);
   private readonly animationCtrl = inject(AnimationController);
   private readonly router = inject(Router);
+  private readonly ecoTipsService = inject(EcoTipsService);
 
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
+  readonly tips$: Observable<TipsResponse> = this.ecoTipsService.tips$;
 
   ionViewDidEnter(): void {
     if (!this.welcomeCard) {
@@ -39,5 +42,10 @@ export class HomePage {
 
   goToList(): void {
     this.router.navigateByUrl('/lista');
+  }
+
+  refreshTips(event: Event): void {
+    this.ecoTipsService.refreshTips();
+    setTimeout(() => (event as CustomEvent).detail?.complete?.(), 700);
   }
 }

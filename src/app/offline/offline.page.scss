@@ -1,0 +1,17 @@
+.offline-content {
+  ion-card {
+    margin-bottom: 16px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    text-align: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--ion-color-medium);
+  }
+}

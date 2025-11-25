@@ -12,6 +12,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding home-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshTips($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar consejos"></ion-refresher-content>
+  </ion-refresher>
+
   <ion-card #welcomeCard>
     <ion-card-header>
       <ion-card-title>Bienvenida/o a tu compra consciente</ion-card-title>
@@ -70,6 +74,31 @@
       </ion-list>
       <ng-template #emptyAlerts>
         <p class="empty-state">Sin alertas por ahora. ¡Disfruta tus alimentos frescos!</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="tips$ | async as tips">
+    <ion-card-header>
+      <ion-card-title>Consejos desde la API REST</ion-card-title>
+      <ion-card-subtitle>{{ tips.message }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-chip color="tertiary" *ngIf="tips.fromCache" class="cache-chip" outline>
+        <ion-icon name="cloud-offline-outline"></ion-icon>
+        <ion-label>Cache local</ion-label>
+      </ion-chip>
+      <ion-list *ngIf="tips.tips.length; else emptyTips" lines="none">
+        <ion-item *ngFor="let tip of tips.tips">
+          <ion-icon name="leaf-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>{{ tip.author }}</h3>
+            <p>{{ tip.quote }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ng-template #emptyTips>
+        <p class="empty-state">Aún no hay consejos guardados. Refresca para intentarlo de nuevo.</p>
       </ng-template>
     </ion-card-content>
   </ion-card>

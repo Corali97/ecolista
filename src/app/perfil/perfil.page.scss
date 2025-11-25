@@ -45,3 +45,14 @@
   text-align: center;
   color: var(--ion-color-medium);
 }
+
+.location-message {
+  margin-top: 0.75rem;
+  color: var(--ion-color-medium-shade);
+}
+
+.coordinates {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}

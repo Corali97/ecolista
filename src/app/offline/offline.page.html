@@ -1,0 +1,62 @@
+<ion-header translucent="true">
+  <ion-toolbar color="light">
+    <ion-title>Modo offline</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding offline-content">
+  <ion-card color="warning">
+    <ion-card-header>
+      <ion-card-title>Sin conexión o ruta no encontrada</ion-card-title>
+      <ion-card-subtitle>Te mostramos la información disponible en cache local.</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Cuando vuelva la conexión podrás sincronizar nuevamente tus datos.</p>
+      <ion-button routerLink="/login" expand="block" color="dark">Volver a iniciar sesión</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="summary$ | async as summary">
+    <ion-card-header>
+      <ion-card-title>Resumen guardado</ion-card-title>
+      <ion-card-subtitle>Datos persistidos en cache local.</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="summary-grid">
+        <div>
+          <h3>{{ summary.total }}</h3>
+          <p>Productos registrados</p>
+        </div>
+        <div>
+          <h3>{{ summary.nearExpiry }}</h3>
+          <p>Por vencer</p>
+        </div>
+        <div>
+          <h3>{{ summary.purchased }}</h3>
+          <p>Comprados</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Consejos ecológicos en cache</ion-card-title>
+      <ion-card-subtitle>Se usan si la API REST falla (404/offline).</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="!cachedTips.length" class="empty-state">
+        No hay consejos almacenados todavía. Conéctate para descargarlos.
+      </p>
+      <ion-list *ngIf="cachedTips.length" lines="none">
+        <ion-item *ngFor="let tip of cachedTips">
+          <ion-icon slot="start" name="leaf"></ion-icon>
+          <ion-label>
+            <h3>{{ tip.author }}</h3>
+            <p>{{ tip.quote }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

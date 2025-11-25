@@ -10,14 +10,19 @@
 <ion-content class="ion-padding perfil-content">
   <ion-card class="profile-card">
     <ion-card-content>
-      <div class="profile-header">
+      <div class="profile-header" *ngIf="user$ | async as user">
         <ion-avatar class="profile-avatar">
           <ion-icon name="person-circle-outline"></ion-icon>
         </ion-avatar>
         <div>
+<<<<<<< ours
           <h2>María López</h2>
           <p>Compradora consciente desde 2024</p>
           <ion-badge color="success" *ngIf="session$ | async as session">{{ session.email }}</ion-badge>
+=======
+          <h2>{{ user.email }}</h2>
+          <p>Sesión segura desde {{ user.loggedAt | date: 'short' }}</p>
+>>>>>>> theirs
         </div>
       </div>
       <ion-button routerLink="/lista" expand="block" color="success">
@@ -89,6 +94,37 @@
           </ion-label>
         </ion-item>
       </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>GPS / cámara</ion-card-title>
+      <ion-card-subtitle>Lectura rápida de ubicación nativa</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" color="tertiary" (click)="captureLocation()">
+        <ion-icon slot="start" name="locate-outline"></ion-icon>
+        Obtener ubicación actual
+      </ion-button>
+      <p *ngIf="locationMessage" class="location-message">{{ locationMessage }}</p>
+      <div *ngIf="coordinates" class="coordinates">
+        <ion-chip color="success" outline>
+          <ion-label>Lat: {{ coordinates.latitude }}</ion-label>
+        </ion-chip>
+        <ion-chip color="success" outline>
+          <ion-label>Lng: {{ coordinates.longitude }}</ion-label>
+        </ion-chip>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-content>
+      <ion-button expand="block" color="medium" (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Cerrar sesión de forma segura
+      </ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>

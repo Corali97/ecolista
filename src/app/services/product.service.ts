@@ -16,13 +16,56 @@ interface CreateProductInput {
   notes?: string;
 }
 
+const DEFAULT_PRODUCTS: Product[] = [
+  {
+    id: 1,
+    name: 'Espinaca orgánica',
+    category: 'Verduras',
+    quantity: 2,
+    unit: 'manojos',
+    expiry: new Date().toISOString().split('T')[0],
+    priority: 'Alta',
+    purchased: false,
+    ecoScore: 92,
+    notes: 'Ideal para ensaladas frescas',
+  },
+  {
+    id: 2,
+    name: 'Tomates locales',
+    category: 'Vegetales',
+    quantity: 6,
+    unit: 'piezas',
+    expiry: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    priority: 'Media',
+    purchased: false,
+    ecoScore: 88,
+  },
+  {
+    id: 3,
+    name: 'Yogur artesanal',
+    category: 'Lácteos',
+    quantity: 4,
+    unit: 'frascos',
+    expiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    priority: 'Alta',
+    purchased: true,
+    ecoScore: 76,
+    notes: 'Consumir en desayunos y meriendas',
+  },
+];
+
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
+<<<<<<< ours
   private readonly productsSubject = new BehaviorSubject<Product[]>([]);
   private readonly syncStatusSubject = new BehaviorSubject<{ message: string; offline: boolean } | null>(null);
 
+=======
+  private readonly storageKey = 'ecolista-products';
+  private readonly productsSubject = new BehaviorSubject<Product[]>([]);
+>>>>>>> theirs
   private idCounter = 1;
 
   readonly products$ = this.productsSubject.asObservable();
@@ -35,6 +78,10 @@ export class ProductService {
     this.restoreProducts();
   }
 
+  constructor() {
+    this.restoreProducts();
+  }
+
   addProduct(input: CreateProductInput): void {
     const newProduct: Product = {
       id: this.idCounter++,
@@ -44,16 +91,24 @@ export class ProductService {
     };
 
     const updated = [...this.productsSubject.value, newProduct];
+<<<<<<< ours
     this.productsSubject.next(updated);
     void this.persistProducts();
+=======
+    this.updateProducts(updated);
+>>>>>>> theirs
   }
 
   markAsPurchased(id: number, purchased: boolean): void {
     const updated = this.productsSubject.value.map((product) =>
       product.id === id ? { ...product, purchased } : product
     );
+<<<<<<< ours
     this.productsSubject.next(updated);
     void this.persistProducts();
+=======
+    this.updateProducts(updated);
+>>>>>>> theirs
   }
 
   getProductById$(id: number): Observable<Product | undefined> {
@@ -92,6 +147,7 @@ export class ProductService {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
+<<<<<<< ours
   async refreshProductsFromApi(): Promise<void> {
     try {
       const products = await firstValueFrom(this.apiService.fetchProducts());
@@ -119,6 +175,37 @@ export class ProductService {
     const date = new Date();
     date.setDate(date.getDate() + daysFromToday);
     return date.toISOString().split('T')[0];
+=======
+  private restoreProducts(): void {
+    const stored = this.readFromStorage();
+    const initialProducts = stored.length ? stored : DEFAULT_PRODUCTS;
+    this.productsSubject.next(initialProducts);
+    this.idCounter = initialProducts.length ? Math.max(...initialProducts.map((p) => p.id)) + 1 : 1;
+    this.persistProducts(initialProducts);
+  }
+
+  private readFromStorage(): Product[] {
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      return stored ? (JSON.parse(stored) as Product[]) : [];
+    } catch (error) {
+      console.warn('No se pudo leer el almacenamiento local, se usarán datos predeterminados.', error);
+      return [];
+    }
+  }
+
+  private persistProducts(products: Product[]): void {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(products));
+    } catch (error) {
+      console.warn('No se pudo guardar la lista de productos en cache local.', error);
+    }
+  }
+
+  private updateProducts(updated: Product[]): void {
+    this.productsSubject.next(updated);
+    this.persistProducts(updated);
+>>>>>>> theirs
   }
 
   private generateEcoScore(category: string): number {
