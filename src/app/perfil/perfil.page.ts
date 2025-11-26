@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+<<<<<<< ours
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Router } from '@angular/router';
 
@@ -7,6 +9,15 @@ import { Product } from '../models/product';
 import { AuthService } from '../services/auth.service';
 import { ProductService } from '../services/product.service';
 import { AuthService } from '../services/auth.service';
+=======
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
+import { Product } from '../models/product';
+import { AuthService } from '../services/auth.service';
+import { LocationService } from '../services/location.service';
+import { ProductService } from '../services/product.service';
+import { StorageService } from '../services/storage.service';
+>>>>>>> theirs
 
 @Component({
   selector: 'app-perfil',
@@ -18,7 +29,13 @@ export class PerfilPage {
   private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
 <<<<<<< ours
+<<<<<<< ours
   private readonly router = inject(Router);
+=======
+  private readonly storage = inject(StorageService);
+  private readonly router = inject(Router);
+  private readonly locationService = inject(LocationService);
+>>>>>>> theirs
 
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
@@ -31,6 +48,10 @@ export class PerfilPage {
   coordinates?: { latitude: number; longitude: number };
   locationMessage = '';
 >>>>>>> theirs
+
+  avatarDataUrl: string | null = null;
+  locationLabel = 'Ubicación no disponible';
+  isGettingLocation = false;
 
   readonly achievements = [
     {
@@ -45,6 +66,7 @@ export class PerfilPage {
     },
   ];
 
+<<<<<<< ours
 <<<<<<< ours
   async logout(): Promise<void> {
     await this.authService.logout();
@@ -75,6 +97,57 @@ export class PerfilPage {
 
   logout(): void {
     this.authService.logout();
+>>>>>>> theirs
+=======
+  ionViewWillEnter(): void {
+    void this.loadAvatar();
+    void this.refreshLocation();
+  }
+
+  get userEmail(): string {
+    return this.authService.currentSession?.email ?? 'Usuario invitado';
+  }
+
+  async captureAvatar(): Promise<void> {
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Prompt,
+      });
+
+      this.avatarDataUrl = photo.dataUrl ?? null;
+      if (this.avatarDataUrl) {
+        await this.storage.set('avatar', this.avatarDataUrl);
+      }
+    } catch (error) {
+      console.warn('Captura cancelada', error);
+    }
+  }
+
+  async loadAvatar(): Promise<void> {
+    this.avatarDataUrl = await this.storage.get<string>('avatar');
+  }
+
+  async refreshLocation(): Promise<void> {
+    this.isGettingLocation = true;
+    const location = await this.locationService.getCurrentLocation();
+    this.isGettingLocation = false;
+    if (location) {
+      this.locationLabel = `Lat ${location.lat.toFixed(4)}, Lng ${location.lng.toFixed(4)}`;
+    }
+  }
+
+  navigateToList(priority?: string): void {
+    this.router.navigate(['/lista'], {
+      queryParams: priority ? { priority, from: 'perfil' } : undefined,
+      state: { highlight: priority },
+    });
+  }
+
+  async logout(): Promise<void> {
+    await this.authService.logout();
 >>>>>>> theirs
   }
 

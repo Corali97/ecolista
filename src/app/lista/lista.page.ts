@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, map, Observable } from 'rxjs';
 import { AnimationController, ToastController } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
@@ -20,8 +21,18 @@ export class ListaPage {
   private readonly productService = inject(ProductService);
   private readonly toastController = inject(ToastController);
   private readonly animationCtrl = inject(AnimationController);
+  readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  readonly products$: Observable<Product[]> = this.productService.products$;
+  readonly offline$ = this.productService.offline$;
+  readonly products$: Observable<Product[]> = combineLatest([
+    this.productService.products$,
+    this.route.queryParamMap.pipe(map((params) => params.get('priority'))),
+  ]).pipe(
+    map(([products, priority]) =>
+      priority ? products.filter((product) => product.priority === priority) : products
+    )
+  );
   readonly soonToExpire$: Observable<Product[]> = this.productService.getSoonToExpire$();
   readonly syncStatus$ = this.productService.syncStatus$;
 
@@ -39,12 +50,17 @@ export class ListaPage {
     this.playScaleAnimation();
   }
 
+<<<<<<< ours
   ionViewWillEnter(): void {
     void this.productService.refreshProductsFromApi();
   }
 
   syncFromApi(): void {
     void this.productService.refreshProductsFromApi();
+=======
+  routeToAll(): void {
+    this.router.navigate([], { queryParams: {} });
+>>>>>>> theirs
   }
 
   async addProduct(): Promise<void> {
@@ -54,11 +70,13 @@ export class ListaPage {
     }
 
     const value = this.productForm.getRawValue();
-    this.productService.addProduct({
-      ...value,
-      priority: value.priority as 'Alta' | 'Media' | 'Baja',
-      quantity: Number(value.quantity),
-    });
+    this.productService
+      .addProduct({
+        ...value,
+        priority: value.priority as 'Alta' | 'Media' | 'Baja',
+        quantity: Number(value.quantity),
+      })
+      .subscribe();
 
     this.productForm.reset({
       name: '',

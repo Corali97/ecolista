@@ -1,3 +1,4 @@
+<<<<<<< ours
 import { Injectable } from '@angular/core';
 <<<<<<< ours
 import { BehaviorSubject, map, Observable } from 'rxjs';
@@ -51,10 +52,38 @@ export class AuthService {
 
   private async restoreSession(): Promise<void> {
     const stored = await this.storageService.get<SessionData>(this.storageKey);
+=======
+import { Injectable, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+
+import { ApiService } from './api.service';
+import { StorageService } from './storage.service';
+
+export interface Session {
+  email: string;
+  token: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly api = inject(ApiService);
+  private readonly storage = inject(StorageService);
+  private readonly router = inject(Router);
+  private readonly sessionKey = 'session';
+
+  private readonly sessionSubject = new BehaviorSubject<Session | null>(null);
+  readonly session$: Observable<Session | null> = this.sessionSubject.asObservable();
+  readonly isLoggedIn$: Observable<boolean> = this.session$.pipe(map((session) => session !== null));
+
+  async init(): Promise<void> {
+    const stored = await this.storage.get<Session>(this.sessionKey);
+>>>>>>> theirs
     if (stored) {
       this.sessionSubject.next(stored);
     }
   }
+<<<<<<< ours
 =======
   private readonly storageKey = 'ecolista-auth';
   private readonly isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -126,6 +155,43 @@ export class AuthService {
     const emailPattern = /@.+\./;
     const passwordValid = password.trim().length >= 6;
     return emailPattern.test(email) && passwordValid;
+  }
+>>>>>>> theirs
+=======
+
+  login(email: string, password: string): Observable<Session> {
+    const session: Session = {
+      email,
+      token: btoa(`${email}:${password}:${Date.now()}`),
+    };
+
+    return this.api.createProduct({
+      id: 0,
+      name: 'Inicio de sesión',
+      category: 'Sistema',
+      quantity: 0,
+      unit: 'u',
+      expiry: new Date().toISOString().split('T')[0],
+      priority: 'Media',
+      purchased: true,
+      ecoScore: 100,
+      notes: 'Evento de autenticación',
+    }).pipe(
+      tap(async () => {
+        this.sessionSubject.next(session);
+        await this.storage.set(this.sessionKey, session);
+      })
+    );
+  }
+
+  async logout(): Promise<void> {
+    this.sessionSubject.next(null);
+    await this.storage.remove(this.sessionKey);
+    await this.router.navigateByUrl('/login');
+  }
+
+  get currentSession(): Session | null {
+    return this.sessionSubject.value;
   }
 >>>>>>> theirs
 }

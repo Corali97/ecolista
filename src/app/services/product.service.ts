@@ -1,7 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+<<<<<<< ours
 import { BehaviorSubject, map, Observable, firstValueFrom } from 'rxjs';
 
+=======
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+>>>>>>> theirs
 import { Product } from '../models/product';
 import { ApiService } from './api.service';
 import { StorageService } from './storage.service';
@@ -59,6 +63,7 @@ const DEFAULT_PRODUCTS: Product[] = [
 })
 export class ProductService {
 <<<<<<< ours
+<<<<<<< ours
   private readonly productsSubject = new BehaviorSubject<Product[]>([]);
   private readonly syncStatusSubject = new BehaviorSubject<{ message: string; offline: boolean } | null>(null);
 
@@ -81,8 +86,61 @@ export class ProductService {
   constructor() {
     this.restoreProducts();
   }
+=======
+  private readonly storageKey = 'products';
+  private readonly productsSubject = new BehaviorSubject<Product[]>([
+    {
+      id: 1,
+      name: 'Espinaca orgánica',
+      category: 'Verduras',
+      quantity: 2,
+      unit: 'manojos',
+      expiry: this.formatDateOffset(2),
+      priority: 'Alta',
+      purchased: false,
+      ecoScore: 92,
+      notes: 'Ideal para ensaladas frescas',
+    },
+    {
+      id: 2,
+      name: 'Tomates locales',
+      category: 'Vegetales',
+      quantity: 6,
+      unit: 'piezas',
+      expiry: this.formatDateOffset(4),
+      priority: 'Media',
+      purchased: false,
+      ecoScore: 88,
+    },
+    {
+      id: 3,
+      name: 'Yogur artesanal',
+      category: 'Lácteos',
+      quantity: 4,
+      unit: 'frascos',
+      expiry: this.formatDateOffset(1),
+      priority: 'Alta',
+      purchased: true,
+      ecoScore: 76,
+      notes: 'Consumir en desayunos y meriendas',
+    },
+  ]);
 
-  addProduct(input: CreateProductInput): void {
+  private idCounter = this.productsSubject.value.length + 1;
+
+  readonly products$ = this.productsSubject.asObservable();
+  readonly offline$ = this.apiService.offlineFallback$.asObservable();
+>>>>>>> theirs
+
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly storageService: StorageService
+  ) {
+    void this.hydrateFromStorage();
+    this.syncWithApi().subscribe();
+  }
+
+  addProduct(input: CreateProductInput): Observable<Product> {
     const newProduct: Product = {
       id: this.idCounter++,
       ecoScore: this.generateEcoScore(input.category),
@@ -90,12 +148,22 @@ export class ProductService {
       ...input,
     };
 
+<<<<<<< ours
     const updated = [...this.productsSubject.value, newProduct];
 <<<<<<< ours
     this.productsSubject.next(updated);
     void this.persistProducts();
 =======
     this.updateProducts(updated);
+>>>>>>> theirs
+=======
+    return this.apiService.createProduct(newProduct).pipe(
+      tap((product) => {
+        const updated = [...this.productsSubject.value, product];
+        this.productsSubject.next(updated);
+        this.persist();
+      })
+    );
 >>>>>>> theirs
   }
 
@@ -105,9 +173,25 @@ export class ProductService {
     );
 <<<<<<< ours
     this.productsSubject.next(updated);
+<<<<<<< ours
     void this.persistProducts();
 =======
     this.updateProducts(updated);
+>>>>>>> theirs
+=======
+    this.persist();
+  }
+
+  syncWithApi(): Observable<Product[]> {
+    return this.apiService.fetchProducts().pipe(
+      tap((products) => {
+        if (products.length) {
+          this.productsSubject.next(products);
+          this.idCounter = products.length + 1;
+          this.persist();
+        }
+      })
+    );
 >>>>>>> theirs
   }
 
@@ -148,6 +232,7 @@ export class ProductService {
   }
 
 <<<<<<< ours
+<<<<<<< ours
   async refreshProductsFromApi(): Promise<void> {
     try {
       const products = await firstValueFrom(this.apiService.fetchProducts());
@@ -171,6 +256,22 @@ export class ProductService {
     }
   }
 
+=======
+  private async hydrateFromStorage(): Promise<void> {
+    const stored = await this.storageService.get<Product[]>(this.storageKey);
+    if (stored?.length) {
+      this.productsSubject.next(stored);
+      this.idCounter = stored.length + 1;
+    } else {
+      this.persist();
+    }
+  }
+
+  private async persist(): Promise<void> {
+    await this.storageService.set(this.storageKey, this.productsSubject.value);
+  }
+
+>>>>>>> theirs
   private formatDateOffset(daysFromToday: number): string {
     const date = new Date();
     date.setDate(date.getDate() + daysFromToday);
