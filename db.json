@@ -1,0 +1,10 @@
+{
+  "products": [
+    { "id": 1, "name": "Manzana", "price": 500 },
+    { "id": 2, "name": "Pan Integral", "price": 1500 },
+    { "id": 3, "name": "Leche Vegetal", "price": 1800 }
+  ],
+  "users": [
+    { "id": 1, "email": "admin", "password": "1234" }
+  ]
+}
