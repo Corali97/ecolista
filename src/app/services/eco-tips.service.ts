@@ -21,6 +21,7 @@ export class EcoTipsService {
   private readonly http = inject(HttpClient);
   private readonly cacheKey = 'ecolista-tips';
   private readonly endpoint = 'https://dummyjson.com/quotes?limit=5';
+  private readonly maxTips = 5;
   private readonly tipsSubject = new BehaviorSubject<TipsResponse>({
     tips: [],
     fromCache: true,
@@ -44,7 +45,7 @@ export class EcoTipsService {
   private fetchTips(): Observable<TipsResponse> {
     return this.http.get<{ quotes: EcoTip[] }>(this.endpoint).pipe(
       map((response) => ({
-        tips: response.quotes,
+        tips: this.sanitizeTips(response.quotes),
         fromCache: false,
         message: 'Consejos actualizados desde la API REST.',
       })),
@@ -52,7 +53,7 @@ export class EcoTipsService {
       catchError(() =>
         from(this.readFromCache()).pipe(
           map((tips) => ({
-            tips,
+            tips: this.sanitizeTips(tips),
             fromCache: true,
             message: tips.length
               ? 'No hay conexión (404/offline). Mostrando consejos guardados localmente.'
@@ -65,7 +66,7 @@ export class EcoTipsService {
 
   private async persistToCache(tips: EcoTip[]): Promise<void> {
     try {
-      localStorage.setItem(this.cacheKey, JSON.stringify(tips));
+      localStorage.setItem(this.cacheKey, JSON.stringify(this.sanitizeTips(tips)));
     } catch (error) {
       console.warn('No se pudo guardar la cache de consejos.', error);
     }
@@ -79,5 +80,18 @@ export class EcoTipsService {
       console.warn('No se pudo leer la cache de consejos.', error);
       return [];
     }
+  }
+
+  private sanitizeTips(tips: EcoTip[]): EcoTip[] {
+    const uniqueByQuote = new Map<string, EcoTip>();
+
+    tips.forEach((tip) => {
+      const normalizedQuote = (tip.quote ?? `${tip.id}`).trim().toLowerCase();
+      if (!uniqueByQuote.has(normalizedQuote)) {
+        uniqueByQuote.set(normalizedQuote, tip);
+      }
+    });
+
+    return Array.from(uniqueByQuote.values()).slice(0, this.maxTips);
   }
 }
