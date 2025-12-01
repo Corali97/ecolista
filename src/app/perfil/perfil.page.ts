@@ -33,7 +33,7 @@ export class PerfilPage {
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
   readonly session$ = this.authService.session$;
 
-  coordinates?: { latitude: number; longitude: number };
+  locationDetails?: { lat: number; lng: number; commune?: string; country?: string };
   locationLabel = 'Ubicación no disponible';
   isGettingLocation = false;
 
@@ -132,10 +132,20 @@ export class PerfilPage {
 
   async refreshLocation(): Promise<void> {
     this.isGettingLocation = true;
-    const location = await this.locationService.getCurrentLocation();
+    const location = await this.locationService.getLocationDetails();
     this.isGettingLocation = false;
     if (location) {
-      this.locationLabel = `Lat ${location.lat.toFixed(4)}, Lng ${location.lng.toFixed(4)}`;
+      this.locationDetails = location;
+
+      const segments = [`Lat ${location.lat.toFixed(4)}, Lng ${location.lng.toFixed(4)}`];
+      if (location.commune) {
+        segments.push(`Comuna: ${location.commune}`);
+      }
+      if (location.country) {
+        segments.push(`País: ${location.country}`);
+      }
+
+      this.locationLabel = segments.join(' · ');
     }
   }
 
