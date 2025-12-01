@@ -79,7 +79,7 @@ export class ListaPage {
     });
 
     const toast = await this.toastController.create({
-      message: 'Producto añadido a tu EcoLista ecológica.',
+      message: 'Producto añadido a la EcoLista ecológica.',
       duration: 1500,
       color: 'success',
       icon: 'leaf',

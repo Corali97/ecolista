@@ -21,12 +21,28 @@ export class ApiService {
 
   readonly offlineFallback$ = new BehaviorSubject(false);
 
+  private readonly spanishTitles = [
+    'Verduras de la semana listas para cocinar',
+    'Pan integral recién horneado',
+    'Frutas de temporada para el desayuno',
+    'Cereales para tus recetas sostenibles',
+    'Proteínas vegetales para variar el menú',
+  ];
+
+  private readonly spanishNotes = [
+    'Prioriza estos ingredientes para reducir desperdicios.',
+    'Recuerda almacenarlos en frascos reutilizables.',
+    'Combínalos con hierbas frescas para más sabor.',
+    'Ideal para planificar tus comidas de la semana.',
+    'Úsalos en tus preparaciones favoritas y congela excedentes.',
+  ];
+
   fetchProducts(): Observable<Product[]> {
     return this.http.get<ApiProduct[]>(`${environment.apiUrl}/posts`).pipe(
       map((items) =>
         items.slice(0, 5).map((item, index) => ({
           id: item.id ?? index,
-          name: item.title,
+          name: this.getSpanishTitle(index, item.title),
           category: 'Despensa',
           quantity: 1,
           unit: 'u',
@@ -34,7 +50,7 @@ export class ApiService {
           priority: index % 2 === 0 ? 'Alta' : 'Media',
           purchased: false,
           ecoScore: 70 + index,
-          notes: item.body,
+          notes: this.getSpanishNote(index, item.body),
         }))
       ),
       tap((products) => this.storage.set(this.cacheKey, products)),
@@ -59,6 +75,14 @@ export class ApiService {
     const date = new Date();
     date.setDate(date.getDate() + daysFromToday);
     return date.toISOString().split('T')[0];
+  }
+
+  private getSpanishTitle(index: number, fallback: string): string {
+    return this.spanishTitles[index % this.spanishTitles.length] ?? fallback;
+  }
+
+  private getSpanishNote(index: number, fallback?: string): string {
+    return this.spanishNotes[index % this.spanishNotes.length] ?? fallback ?? '';
   }
 
   private handleError(error: unknown, fallbackItem?: Product): Observable<any> {
