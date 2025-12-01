@@ -16,10 +16,10 @@ export class AuthService {
   private readonly storage = inject(StorageService);
   private readonly router = inject(Router);
   private readonly sessionKey = 'session';
-  private readonly validCredentials = {
-    email: 'admin@ecolista.com',
-    password: '1234',
-  } as const;
+  private readonly validCredentials = [
+    { email: 'admin@ecolista.com', password: '1234' },
+    { email: 'coralirodriguez1997@gmail.com', password: '123456' },
+  ] as const;
 
   private readonly sessionSubject = new BehaviorSubject<Session | null>(null);
   readonly session$: Observable<Session | null> = this.sessionSubject.asObservable();
@@ -65,7 +65,10 @@ export class AuthService {
   }
 
   private isValidCredentials(email: string, password: string): boolean {
-    return email === this.validCredentials.email && password === this.validCredentials.password;
+    const normalizedEmail = email.trim().toLowerCase();
+    return this.validCredentials.some(
+      (credentials) => credentials.email === normalizedEmail && credentials.password === password
+    );
   }
 
   async logout(): Promise<void> {
