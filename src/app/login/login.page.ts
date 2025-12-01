@@ -65,9 +65,14 @@ export class LoginPage implements OnInit, OnDestroy {
           const redirect = this.route.snapshot.queryParamMap.get('redirect') ?? '/home';
           this.router.navigateByUrl(redirect, { replaceUrl: true });
         },
-        error: async () => {
+        error: async (error) => {
+          const isCredentialError = error instanceof Error && error.message === 'INVALID_CREDENTIALS';
+          const message = isCredentialError
+            ? 'Usuario o contraseña incorrectos. Usa las credenciales indicadas.'
+            : 'No pudimos validar tus datos. Prueba de nuevo en unos segundos.';
+
           const toast = await this.toastController.create({
-            message: 'No pudimos validar tus datos. Prueba de nuevo en unos segundos.',
+            message,
             duration: 2200,
             color: 'danger',
             icon: 'alert-circle',

@@ -5,6 +5,14 @@
     { "id": 3, "name": "Leche Vegetal", "price": 1800 }
   ],
   "users": [
-    { "id": 1, "email": "admin", "password": "1234" }
+<<<<<<< ours
+    {
+      "id": 1,
+      "email": "coralirodriguez1997@gmail.com",
+      "password": "123456"
+    }
+=======
+    { "id": 1, "email": "admin@ecolista.com", "password": "1234" }
+>>>>>>> theirs
   ]
 }

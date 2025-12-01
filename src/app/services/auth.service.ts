@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap, throwError } from 'rxjs';
 
 import { ApiService } from './api.service';
 import { StorageService } from './storage.service';
@@ -16,6 +16,10 @@ export class AuthService {
   private readonly storage = inject(StorageService);
   private readonly router = inject(Router);
   private readonly sessionKey = 'session';
+  private readonly validCredentials = {
+    email: 'admin@ecolista.com',
+    password: '1234',
+  } as const;
 
   private readonly sessionSubject = new BehaviorSubject<Session | null>(null);
   readonly session$: Observable<Session | null> = this.sessionSubject.asObservable();
@@ -31,6 +35,10 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<Session> {
+    if (!this.isValidCredentials(email, password)) {
+      return throwError(() => new Error('INVALID_CREDENTIALS'));
+    }
+
     const session: Session = {
       email,
       token: btoa(`${email}:${password}:${Date.now()}`),
@@ -54,6 +62,10 @@ export class AuthService {
       }),
       map(() => session)
     );
+  }
+
+  private isValidCredentials(email: string, password: string): boolean {
+    return email === this.validCredentials.email && password === this.validCredentials.password;
   }
 
   async logout(): Promise<void> {
