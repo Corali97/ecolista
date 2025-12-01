@@ -10,15 +10,6 @@
 <ion-content class="ion-padding perfil-content">
   <ion-card class="profile-card">
     <ion-card-content>
-<<<<<<< ours
-      <div class="profile-header" *ngIf="user$ | async as user">
-        <ion-avatar class="profile-avatar">
-          <ion-icon name="person-circle-outline"></ion-icon>
-        </ion-avatar>
-        <div>
-<<<<<<< ours
-          <h2>María López</h2>
-=======
       <div class="profile-header">
         <ion-avatar class="profile-avatar" (click)="captureAvatar()">
           <img *ngIf="avatarDataUrl; else defaultAvatar" [src]="avatarDataUrl" alt="Avatar" />
@@ -28,13 +19,8 @@
         </ion-avatar>
         <div>
           <h2>{{ userEmail }}</h2>
->>>>>>> theirs
-          <p>Compradora consciente desde 2024</p>
+          <p>Sesión segura en tu dispositivo</p>
           <ion-badge color="success" *ngIf="session$ | async as session">{{ session.email }}</ion-badge>
-=======
-          <h2>{{ user.email }}</h2>
-          <p>Sesión segura desde {{ user.loggedAt | date: 'short' }}</p>
->>>>>>> theirs
         </div>
       </div>
       <ion-button (click)="navigateToList('Alta')" expand="block" color="success">
@@ -115,25 +101,6 @@
 
   <ion-card>
     <ion-card-header>
-<<<<<<< ours
-      <ion-card-title>GPS / cámara</ion-card-title>
-      <ion-card-subtitle>Lectura rápida de ubicación nativa</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-button expand="block" color="tertiary" (click)="captureLocation()">
-        <ion-icon slot="start" name="locate-outline"></ion-icon>
-        Obtener ubicación actual
-      </ion-button>
-      <p *ngIf="locationMessage" class="location-message">{{ locationMessage }}</p>
-      <div *ngIf="coordinates" class="coordinates">
-        <ion-chip color="success" outline>
-          <ion-label>Lat: {{ coordinates.latitude }}</ion-label>
-        </ion-chip>
-        <ion-chip color="success" outline>
-          <ion-label>Lng: {{ coordinates.longitude }}</ion-label>
-        </ion-chip>
-      </div>
-=======
       <ion-card-title>Ubicación</ion-card-title>
       <ion-card-subtitle>Usamos GPS para contextualizar tus compras.</ion-card-subtitle>
     </ion-card-header>
@@ -143,17 +110,10 @@
         <ion-icon slot="start" name="navigate"></ion-icon>
         {{ isGettingLocation ? 'Obteniendo...' : 'Actualizar GPS' }}
       </ion-button>
->>>>>>> theirs
     </ion-card-content>
   </ion-card>
 
   <ion-card>
-<<<<<<< ours
-    <ion-card-content>
-      <ion-button expand="block" color="medium" (click)="logout()">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Cerrar sesión de forma segura
-=======
     <ion-card-header>
       <ion-card-title>Sesión</ion-card-title>
       <ion-card-subtitle>Controla tu acceso y datos guardados.</ion-card-subtitle>
@@ -166,7 +126,6 @@
       <ion-button color="danger" expand="block" (click)="logout()">
         <ion-icon slot="start" name="log-out"></ion-icon>
         Cerrar sesión
->>>>>>> theirs
       </ion-button>
     </ion-card-content>
   </ion-card>

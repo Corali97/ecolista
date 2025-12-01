@@ -1,15 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-<<<<<<< ours
-<<<<<<< ours
-import { AuthGuard } from './guards/auth.guard';
-=======
 import { authGuard } from './guards/auth.guard';
->>>>>>> theirs
-=======
-import { AuthGuard } from './services/auth.guard';
->>>>>>> theirs
 
 const routes: Routes = [
   {
@@ -23,54 +15,22 @@ const routes: Routes = [
   },
   {
     path: 'home',
-<<<<<<< ours
-<<<<<<< ours
-    canActivate: [AuthGuard],
-=======
     canActivate: [authGuard],
->>>>>>> theirs
-=======
-    canActivate: [AuthGuard],
->>>>>>> theirs
     loadChildren: () => import('./home/home.module').then((m) => m.HomePageModule),
   },
   {
     path: 'lista',
-<<<<<<< ours
-<<<<<<< ours
-    canActivate: [AuthGuard],
-=======
     canActivate: [authGuard],
->>>>>>> theirs
-=======
-    canActivate: [AuthGuard],
->>>>>>> theirs
     loadChildren: () => import('./lista/lista.module').then((m) => m.ListaPageModule),
   },
   {
     path: 'detalle/:id',
-<<<<<<< ours
-<<<<<<< ours
-    canActivate: [AuthGuard],
-=======
     canActivate: [authGuard],
->>>>>>> theirs
-=======
-    canActivate: [AuthGuard],
->>>>>>> theirs
     loadChildren: () => import('./detalle/detalle.module').then((m) => m.DetallePageModule),
   },
   {
     path: 'perfil',
-<<<<<<< ours
-<<<<<<< ours
-    canActivate: [AuthGuard],
-=======
     canActivate: [authGuard],
->>>>>>> theirs
-=======
-    canActivate: [AuthGuard],
->>>>>>> theirs
     loadChildren: () => import('./perfil/perfil.module').then((m) => m.PerfilPageModule),
   },
   {

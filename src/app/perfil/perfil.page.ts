@@ -1,15 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-<<<<<<< ours
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { Router } from '@angular/router';
-
-import { Product } from '../models/product';
-import { AuthService } from '../services/auth.service';
-import { ProductService } from '../services/product.service';
-import { AuthService } from '../services/auth.service';
-=======
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 import { Product } from '../models/product';
@@ -17,7 +8,6 @@ import { AuthService } from '../services/auth.service';
 import { LocationService } from '../services/location.service';
 import { ProductService } from '../services/product.service';
 import { StorageService } from '../services/storage.service';
->>>>>>> theirs
 
 @Component({
   selector: 'app-perfil',
@@ -28,30 +18,19 @@ import { StorageService } from '../services/storage.service';
 export class PerfilPage {
   private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
-<<<<<<< ours
-<<<<<<< ours
-  private readonly router = inject(Router);
-=======
   private readonly storage = inject(StorageService);
   private readonly router = inject(Router);
   private readonly locationService = inject(LocationService);
->>>>>>> theirs
 
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
   readonly session$ = this.authService.session$;
-=======
 
-  readonly summary$ = this.productService.getInventorySummary$();
-  readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
-  readonly user$ = this.authService.user$;
   coordinates?: { latitude: number; longitude: number };
-  locationMessage = '';
->>>>>>> theirs
-
-  avatarDataUrl: string | null = null;
   locationLabel = 'Ubicación no disponible';
   isGettingLocation = false;
+
+  avatarDataUrl: string | null = null;
 
   readonly achievements = [
     {
@@ -66,39 +45,6 @@ export class PerfilPage {
     },
   ];
 
-<<<<<<< ours
-<<<<<<< ours
-  async logout(): Promise<void> {
-    await this.authService.logout();
-    await Haptics.impact({ style: ImpactStyle.Medium });
-    this.router.navigateByUrl('/login', { replaceUrl: true });
-=======
-  captureLocation(): void {
-    this.locationMessage = 'Obteniendo ubicación desde GPS del dispositivo…';
-
-    if (!navigator.geolocation) {
-      this.locationMessage = 'El navegador no expone el GPS.';
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.coordinates = {
-          latitude: Number(position.coords.latitude.toFixed(5)),
-          longitude: Number(position.coords.longitude.toFixed(5)),
-        };
-        this.locationMessage = 'Ubicación capturada con el plugin de geolocalización del dispositivo.';
-      },
-      (error) => {
-        this.locationMessage = `No se pudo obtener la ubicación: ${error.message}`;
-      }
-    );
-  }
-
-  logout(): void {
-    this.authService.logout();
->>>>>>> theirs
-=======
   ionViewWillEnter(): void {
     void this.loadAvatar();
     void this.refreshLocation();
@@ -148,7 +94,5 @@ export class PerfilPage {
 
   async logout(): Promise<void> {
     await this.authService.logout();
->>>>>>> theirs
   }
-
 }

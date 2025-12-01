@@ -1,11 +1,6 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-<<<<<<< ours
-import { BehaviorSubject, map, Observable, firstValueFrom } from 'rxjs';
-
-=======
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
->>>>>>> theirs
+
 import { Product } from '../models/product';
 import { ApiService } from './api.service';
 import { StorageService } from './storage.service';
@@ -20,74 +15,13 @@ interface CreateProductInput {
   notes?: string;
 }
 
-const DEFAULT_PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: 'Espinaca orgánica',
-    category: 'Verduras',
-    quantity: 2,
-    unit: 'manojos',
-    expiry: new Date().toISOString().split('T')[0],
-    priority: 'Alta',
-    purchased: false,
-    ecoScore: 92,
-    notes: 'Ideal para ensaladas frescas',
-  },
-  {
-    id: 2,
-    name: 'Tomates locales',
-    category: 'Vegetales',
-    quantity: 6,
-    unit: 'piezas',
-    expiry: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    priority: 'Media',
-    purchased: false,
-    ecoScore: 88,
-  },
-  {
-    id: 3,
-    name: 'Yogur artesanal',
-    category: 'Lácteos',
-    quantity: 4,
-    unit: 'frascos',
-    expiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    priority: 'Alta',
-    purchased: true,
-    ecoScore: 76,
-    notes: 'Consumir en desayunos y meriendas',
-  },
-];
-
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-<<<<<<< ours
-<<<<<<< ours
-  private readonly productsSubject = new BehaviorSubject<Product[]>([]);
-  private readonly syncStatusSubject = new BehaviorSubject<{ message: string; offline: boolean } | null>(null);
-
-=======
-  private readonly storageKey = 'ecolista-products';
-  private readonly productsSubject = new BehaviorSubject<Product[]>([]);
->>>>>>> theirs
-  private idCounter = 1;
-
-  readonly products$ = this.productsSubject.asObservable();
-  readonly syncStatus$ = this.syncStatusSubject.asObservable();
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly storageService: StorageService
-  ) {
-    this.restoreProducts();
-  }
-
-  constructor() {
-    this.restoreProducts();
-  }
-=======
   private readonly storageKey = 'products';
+  private readonly apiService = inject(ApiService);
+  private readonly storageService = inject(StorageService);
   private readonly productsSubject = new BehaviorSubject<Product[]>([
     {
       id: 1,
@@ -130,12 +64,8 @@ export class ProductService {
 
   readonly products$ = this.productsSubject.asObservable();
   readonly offline$ = this.apiService.offlineFallback$.asObservable();
->>>>>>> theirs
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly storageService: StorageService
-  ) {
+  constructor() {
     void this.hydrateFromStorage();
     this.syncWithApi().subscribe();
   }
@@ -148,15 +78,6 @@ export class ProductService {
       ...input,
     };
 
-<<<<<<< ours
-    const updated = [...this.productsSubject.value, newProduct];
-<<<<<<< ours
-    this.productsSubject.next(updated);
-    void this.persistProducts();
-=======
-    this.updateProducts(updated);
->>>>>>> theirs
-=======
     return this.apiService.createProduct(newProduct).pipe(
       tap((product) => {
         const updated = [...this.productsSubject.value, product];
@@ -164,22 +85,14 @@ export class ProductService {
         this.persist();
       })
     );
->>>>>>> theirs
   }
 
   markAsPurchased(id: number, purchased: boolean): void {
     const updated = this.productsSubject.value.map((product) =>
       product.id === id ? { ...product, purchased } : product
     );
-<<<<<<< ours
-    this.productsSubject.next(updated);
-<<<<<<< ours
-    void this.persistProducts();
-=======
     this.updateProducts(updated);
->>>>>>> theirs
-=======
-    this.persist();
+    void this.persist();
   }
 
   syncWithApi(): Observable<Product[]> {
@@ -192,7 +105,6 @@ export class ProductService {
         }
       })
     );
->>>>>>> theirs
   }
 
   getProductById$(id: number): Observable<Product | undefined> {
@@ -231,32 +143,6 @@ export class ProductService {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
-<<<<<<< ours
-<<<<<<< ours
-  async refreshProductsFromApi(): Promise<void> {
-    try {
-      const products = await firstValueFrom(this.apiService.fetchProducts());
-      this.productsSubject.next(products);
-      this.idCounter = products.length + 1;
-      await this.persistProducts();
-      this.syncStatusSubject.next({ message: 'Datos sincronizados con la API.', offline: false });
-    } catch (error) {
-      const stored = await this.storageService.get<Product[]>('products');
-      if (stored?.length) {
-        this.productsSubject.next(stored);
-        this.idCounter = stored.length + 1;
-      }
-
-      const offlineMessage =
-        error instanceof HttpErrorResponse && error.status === 404
-          ? 'La API respondió 404. Mostramos los datos guardados sin perderlos.'
-          : 'No fue posible contactar la API. Se muestran los últimos datos almacenados.';
-
-      this.syncStatusSubject.next({ message: offlineMessage, offline: true });
-    }
-  }
-
-=======
   private async hydrateFromStorage(): Promise<void> {
     const stored = await this.storageService.get<Product[]>(this.storageKey);
     if (stored?.length) {
@@ -271,42 +157,8 @@ export class ProductService {
     await this.storageService.set(this.storageKey, this.productsSubject.value);
   }
 
->>>>>>> theirs
-  private formatDateOffset(daysFromToday: number): string {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromToday);
-    return date.toISOString().split('T')[0];
-=======
-  private restoreProducts(): void {
-    const stored = this.readFromStorage();
-    const initialProducts = stored.length ? stored : DEFAULT_PRODUCTS;
-    this.productsSubject.next(initialProducts);
-    this.idCounter = initialProducts.length ? Math.max(...initialProducts.map((p) => p.id)) + 1 : 1;
-    this.persistProducts(initialProducts);
-  }
-
-  private readFromStorage(): Product[] {
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      return stored ? (JSON.parse(stored) as Product[]) : [];
-    } catch (error) {
-      console.warn('No se pudo leer el almacenamiento local, se usarán datos predeterminados.', error);
-      return [];
-    }
-  }
-
-  private persistProducts(products: Product[]): void {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(products));
-    } catch (error) {
-      console.warn('No se pudo guardar la lista de productos en cache local.', error);
-    }
-  }
-
   private updateProducts(updated: Product[]): void {
     this.productsSubject.next(updated);
-    this.persistProducts(updated);
->>>>>>> theirs
   }
 
   private generateEcoScore(category: string): number {
@@ -324,58 +176,9 @@ export class ProductService {
     return Math.max(50, Math.min(100, base + variation));
   }
 
-  private async persistProducts(): Promise<void> {
-    await this.storageService.set('products', this.productsSubject.value);
-  }
-
-  private async restoreProducts(): Promise<void> {
-    const stored = await this.storageService.get<Product[]>('products');
-    if (stored?.length) {
-      this.productsSubject.next(stored);
-      this.idCounter = stored.length + 1;
-      return;
-    }
-
-    const defaultProducts: Product[] = [
-      {
-        id: 1,
-        name: 'Espinaca orgánica',
-        category: 'Verduras',
-        quantity: 2,
-        unit: 'manojos',
-        expiry: this.formatDateOffset(2),
-        priority: 'Alta',
-        purchased: false,
-        ecoScore: 92,
-        notes: 'Ideal para ensaladas frescas',
-      },
-      {
-        id: 2,
-        name: 'Tomates locales',
-        category: 'Vegetales',
-        quantity: 6,
-        unit: 'piezas',
-        expiry: this.formatDateOffset(4),
-        priority: 'Media',
-        purchased: false,
-        ecoScore: 88,
-      },
-      {
-        id: 3,
-        name: 'Yogur artesanal',
-        category: 'Lácteos',
-        quantity: 4,
-        unit: 'frascos',
-        expiry: this.formatDateOffset(1),
-        priority: 'Alta',
-        purchased: true,
-        ecoScore: 76,
-        notes: 'Consumir en desayunos y meriendas',
-      },
-    ];
-
-    this.productsSubject.next(defaultProducts);
-    this.idCounter = defaultProducts.length + 1;
-    await this.persistProducts();
+  private formatDateOffset(daysFromToday: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + daysFromToday);
+    return date.toISOString().split('T')[0];
   }
 }

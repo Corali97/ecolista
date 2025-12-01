@@ -12,16 +12,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding home-content">
-<<<<<<< ours
   <ion-refresher slot="fixed" (ionRefresh)="refreshTips($event)">
     <ion-refresher-content pullingText="Desliza para actualizar consejos"></ion-refresher-content>
   </ion-refresher>
-=======
+
   <ion-chip color="warning" *ngIf="offline$ | async" class="ion-margin-bottom">
     <ion-icon name="cloud-offline" color="warning"></ion-icon>
     <ion-label>Conectividad limitada: usando datos guardados.</ion-label>
   </ion-chip>
->>>>>>> theirs
 
   <ion-card #welcomeCard>
     <ion-card-header>

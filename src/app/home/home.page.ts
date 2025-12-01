@@ -23,11 +23,8 @@ export class HomePage {
 
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
-<<<<<<< ours
   readonly tips$: Observable<TipsResponse> = this.ecoTipsService.tips$;
-=======
   readonly offline$ = this.productService.offline$;
->>>>>>> theirs
 
   ionViewDidEnter(): void {
     if (!this.welcomeCard) {

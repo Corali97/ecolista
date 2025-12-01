@@ -13,18 +13,6 @@
 </ion-header>
 
 <ion-content class="ion-padding lista-content">
-<<<<<<< ours
-  <ion-card *ngIf="(syncStatus$ | async) as sync" color="light">
-    <ion-card-content class="status-row">
-      <ion-chip [color]="sync.offline ? 'warning' : 'success'" outline>
-        <ion-icon name="cloud-download-outline"></ion-icon>
-        <ion-label>{{ sync.message }}</ion-label>
-      </ion-chip>
-      <ion-button size="small" fill="clear" (click)="syncFromApi()">
-        <ion-icon name="refresh"></ion-icon>
-        Sincronizar API
-      </ion-button>
-=======
   <ion-chip color="warning" *ngIf="offline$ | async" class="ion-margin-bottom">
     <ion-icon name="cloud-offline" color="warning"></ion-icon>
     <ion-label>Modo offline: mostrando datos guardados.</ion-label>
@@ -32,9 +20,8 @@
 
   <ion-card *ngIf="(route.snapshot.queryParamMap.get('priority')) as priorityFilter">
     <ion-card-content>
-      Navegación avanzada activa: mostrando solo prioridad {{ priorityFilter }}. 
+      Navegación avanzada activa: mostrando solo prioridad {{ priorityFilter }}.
       <ion-button size="small" fill="clear" (click)="routeToAll()">Limpiar</ion-button>
->>>>>>> theirs
     </ion-card-content>
   </ion-card>
 
@@ -91,10 +78,14 @@
             </ion-segment>
           </ion-item>
 
-          <ion-item lines="none">
-            <ion-label position="stacked">Notas</ion-label>
-            <ion-textarea auto-grow="true" formControlName="notes" placeholder="Ideas de recetas o recordatorios"></ion-textarea>
-          </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">Notas</ion-label>
+              <ion-textarea
+                auto-grow="true"
+                formControlName="notes"
+                placeholder="Ideas de recetas o recordatorios"
+              ></ion-textarea>
+            </ion-item>
         </ion-list>
 
         <ion-button type="submit" expand="block" class="ion-margin-top">

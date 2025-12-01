@@ -34,7 +34,6 @@ export class ListaPage {
     )
   );
   readonly soonToExpire$: Observable<Product[]> = this.productService.getSoonToExpire$();
-  readonly syncStatus$ = this.productService.syncStatus$;
 
   readonly productForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -50,17 +49,8 @@ export class ListaPage {
     this.playScaleAnimation();
   }
 
-<<<<<<< ours
-  ionViewWillEnter(): void {
-    void this.productService.refreshProductsFromApi();
-  }
-
-  syncFromApi(): void {
-    void this.productService.refreshProductsFromApi();
-=======
   routeToAll(): void {
     this.router.navigate([], { queryParams: {} });
->>>>>>> theirs
   }
 
   async addProduct(): Promise<void> {
