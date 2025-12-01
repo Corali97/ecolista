@@ -51,7 +51,8 @@ export class AuthService {
       tap(async () => {
         this.sessionSubject.next(session);
         await this.storage.set(this.sessionKey, session);
-      })
+      }),
+      map(() => session)
     );
   }
 
