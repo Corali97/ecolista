@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
+import { Platform, ToastController } from '@ionic/angular';
 
 import { Product } from '../models/product';
 import { AuthService } from '../services/auth.service';
@@ -21,6 +23,11 @@ export class PerfilPage {
   private readonly storage = inject(StorageService);
   private readonly router = inject(Router);
   private readonly locationService = inject(LocationService);
+  private readonly platform = inject(Platform);
+  private readonly toastController = inject(ToastController);
+
+  @ViewChild('avatarInput', { static: false })
+  private avatarInput?: ElementRef<HTMLInputElement>;
 
   readonly summary$ = this.productService.getInventorySummary$();
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
@@ -55,6 +62,17 @@ export class PerfilPage {
   }
 
   async captureAvatar(): Promise<void> {
+    if (!this.platform.is('hybrid') && !Capacitor.isNativePlatform()) {
+      this.triggerFilePicker();
+      return;
+    }
+
+    const permissions = await Camera.checkPermissions();
+    if (permissions.camera === 'denied') {
+      await this.presentToast('Activa los permisos de cámara en la configuración del dispositivo.');
+      return;
+    }
+
     try {
       const photo = await Camera.getPhoto({
         quality: 80,
@@ -63,17 +81,53 @@ export class PerfilPage {
         source: CameraSource.Prompt,
       });
 
-      this.avatarDataUrl = photo.dataUrl ?? null;
-      if (this.avatarDataUrl) {
-        await this.storage.set('avatar', this.avatarDataUrl);
-      }
+      await this.saveAvatar(photo.dataUrl ?? null);
     } catch (error) {
-      console.warn('Captura cancelada', error);
+      console.warn('Captura cancelada o fallida, usando selección de archivo', error);
+      this.triggerFilePicker();
     }
   }
 
   async loadAvatar(): Promise<void> {
     this.avatarDataUrl = await this.storage.get<string>('avatar');
+  }
+
+  async onAvatarFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const result = reader.result as string | null;
+      await this.saveAvatar(result);
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private triggerFilePicker(): void {
+    this.avatarInput?.nativeElement.click();
+  }
+
+  private async saveAvatar(dataUrl: string | null): Promise<void> {
+    this.avatarDataUrl = dataUrl;
+    if (this.avatarDataUrl) {
+      await this.storage.set('avatar', this.avatarDataUrl);
+      await this.presentToast('Foto de perfil actualizada.');
+    }
+  }
+
+  private async presentToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom',
+    });
+
+    await toast.present();
   }
 
   async refreshLocation(): Promise<void> {

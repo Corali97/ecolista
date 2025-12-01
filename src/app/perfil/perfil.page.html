@@ -8,6 +8,14 @@
 </ion-header>
 
 <ion-content class="ion-padding perfil-content">
+  <input
+    #avatarInput
+    type="file"
+    accept="image/*"
+    capture="environment"
+    hidden
+    (change)="onAvatarFileSelected($event)"
+  />
   <ion-card class="profile-card">
     <ion-card-content>
       <div class="profile-header">
