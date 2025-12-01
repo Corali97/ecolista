@@ -22,6 +22,33 @@ export class EcoTipsService {
   private readonly cacheKey = 'ecolista-tips';
   private readonly endpoint = 'https://dummyjson.com/quotes?limit=5';
   private readonly maxTips = 5;
+  private readonly spanishTips: EcoTip[] = [
+    {
+      id: 1,
+      author: 'Equipo EcoLista',
+      quote: 'Planifica tus comidas para aprovechar al máximo cada ingrediente y reducir el desperdicio.',
+    },
+    {
+      id: 2,
+      author: 'EcoLista',
+      quote: 'Compra a granel siempre que puedas y lleva tus propios envases reutilizables.',
+    },
+    {
+      id: 3,
+      author: 'Consejo sostenible',
+      quote: 'Congela porciones pequeñas de frutas o verduras maduras para usarlas en batidos o sopas.',
+    },
+    {
+      id: 4,
+      author: 'EcoLista',
+      quote: 'Organiza tu refrigerador usando el método "primero en entrar, primero en salir" para evitar olvidos.',
+    },
+    {
+      id: 5,
+      author: 'Equipo EcoLista',
+      quote: 'Prefiere productos locales y de temporada para reducir la huella de transporte.',
+    },
+  ];
   private readonly tipsSubject = new BehaviorSubject<TipsResponse>({
     tips: [],
     fromCache: true,
@@ -45,15 +72,15 @@ export class EcoTipsService {
   private fetchTips(): Observable<TipsResponse> {
     return this.http.get<{ quotes: EcoTip[] }>(this.endpoint).pipe(
       map((response) => ({
-        tips: this.sanitizeTips(response.quotes),
+        tips: this.withSpanishTips(this.sanitizeTips(response.quotes)),
         fromCache: false,
-        message: 'Consejos actualizados desde la API REST.',
+        message: 'Consejos actualizados para tu EcoLista.',
       })),
       tap(({ tips }) => this.persistToCache(tips)),
       catchError(() =>
         from(this.readFromCache()).pipe(
           map((tips) => ({
-            tips: this.sanitizeTips(tips),
+            tips: this.withSpanishTips(this.sanitizeTips(tips)),
             fromCache: true,
             message: tips.length
               ? 'No hay conexión (404/offline). Mostrando consejos guardados localmente.'
@@ -93,5 +120,20 @@ export class EcoTipsService {
     });
 
     return Array.from(uniqueByQuote.values()).slice(0, this.maxTips);
+  }
+
+  private withSpanishTips(tips: EcoTip[]): EcoTip[] {
+    if (!tips.length) {
+      return this.sanitizeTips(this.spanishTips);
+    }
+
+    return tips.map((tip, index) => {
+      const localized = this.spanishTips[index % this.spanishTips.length];
+      return {
+        ...tip,
+        author: localized.author,
+        quote: localized.quote,
+      };
+    });
   }
 }
