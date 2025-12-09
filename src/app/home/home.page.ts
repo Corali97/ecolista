@@ -25,6 +25,9 @@ export class HomePage {
   readonly nearExpiry$: Observable<Product[]> = this.productService.getSoonToExpire$();
   readonly tips$: Observable<TipsResponse> = this.ecoTipsService.tips$;
   readonly offline$ = this.productService.offline$;
+  readonly tipsLoading$ = this.ecoTipsService.loading$;
+  readonly productLoading$ = this.productService.loading$;
+  readonly syncError$ = this.productService.syncError$;
 
   ionViewDidEnter(): void {
     if (!this.welcomeCard) {

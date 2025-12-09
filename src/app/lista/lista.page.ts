@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map, Observable } from 'rxjs';
+import { combineLatest, finalize, map, Observable } from 'rxjs';
 import { AnimationController, ToastController } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
@@ -25,6 +25,8 @@ export class ListaPage {
   private readonly router = inject(Router);
 
   readonly offline$ = this.productService.offline$;
+  readonly loading$ = this.productService.loading$;
+  readonly syncError$ = this.productService.syncError$;
   readonly products$: Observable<Product[]> = combineLatest([
     this.productService.products$,
     this.route.queryParamMap.pipe(map((params) => params.get('priority'))),
@@ -45,6 +47,8 @@ export class ListaPage {
     notes: [''],
   });
 
+  isSubmitting = false;
+
   ionViewDidEnter(): void {
     this.playScaleAnimation();
   }
@@ -60,13 +64,29 @@ export class ListaPage {
     }
 
     const value = this.productForm.getRawValue();
+    this.isSubmitting = true;
+
     this.productService
       .addProduct({
         ...value,
         priority: value.priority as 'Alta' | 'Media' | 'Baja',
         quantity: Number(value.quantity),
       })
-      .subscribe();
+      .pipe(finalize(() => (this.isSubmitting = false)))
+      .subscribe({
+        next: async () => {
+          await this.presentToast('Producto añadido a la EcoLista ecológica.', 'success', 'leaf');
+          await Haptics.impact({ style: ImpactStyle.Light });
+          this.playScaleAnimation();
+        },
+        error: async () => {
+          await this.presentToast(
+            'No pudimos sincronizar el producto. Se guardó localmente y reintentaremos luego.',
+            'warning',
+            'alert'
+          );
+        },
+      });
 
     this.productForm.reset({
       name: '',
@@ -77,18 +97,6 @@ export class ListaPage {
       priority: 'Alta',
       notes: '',
     });
-
-    const toast = await this.toastController.create({
-      message: 'Producto añadido a la EcoLista ecológica.',
-      duration: 1500,
-      color: 'success',
-      icon: 'leaf',
-    });
-    await toast.present();
-
-    await Haptics.impact({ style: ImpactStyle.Light });
-
-    this.playScaleAnimation();
   }
 
   togglePurchased(product: Product): void {
@@ -115,6 +123,20 @@ export class ListaPage {
     return product.id;
   }
 
+  refreshProducts(event?: Event): void {
+    this.productService
+      .refreshFromApi()
+      .pipe(finalize(() => (event as CustomEvent | undefined)?.detail?.complete?.()))
+      .subscribe({
+        error: async () =>
+          this.presentToast(
+            'No pudimos actualizar desde el servidor, mostrando productos guardados.',
+            'warning',
+            'cloud-offline'
+          ),
+      });
+  }
+
   private playScaleAnimation(): void {
     if (!this.formCard) {
       return;
@@ -128,5 +150,15 @@ export class ListaPage {
       .fromTo('opacity', '0.85', '1')
       .easing('ease-out')
       .play();
+  }
+
+  private async presentToast(message: string, color: string, icon: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      icon,
+    });
+    await toast.present();
   }
 }

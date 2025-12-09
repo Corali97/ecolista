@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, from, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, from, map, tap } from 'rxjs';
 
 export interface EcoTip {
   id: number;
@@ -22,6 +22,7 @@ export class EcoTipsService {
   private readonly cacheKey = 'ecolista-tips';
   private readonly endpoint = 'https://dummyjson.com/quotes?limit=5';
   private readonly maxTips = 5;
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   private readonly spanishTips: EcoTip[] = [
     {
       id: 1,
@@ -56,13 +57,22 @@ export class EcoTipsService {
   });
 
   readonly tips$ = this.tipsSubject.asObservable();
+  readonly loading$ = this.loadingSubject.asObservable();
 
   constructor() {
     this.refreshTips();
   }
 
   refreshTips(): void {
-    this.fetchTips().subscribe((response) => this.tipsSubject.next(response));
+    if (this.loadingSubject.value) {
+      return;
+    }
+
+    this.loadingSubject.next(true);
+
+    this.fetchTips()
+      .pipe(finalize(() => this.loadingSubject.next(false)))
+      .subscribe((response) => this.tipsSubject.next(response));
   }
 
   async getCachedTipsSnapshot(): Promise<EcoTip[]> {

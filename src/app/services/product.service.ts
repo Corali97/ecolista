@@ -1,5 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 
 import { Product } from '../models/product';
 import { ApiService } from './api.service';
@@ -22,6 +33,8 @@ export class ProductService {
   private readonly storageKey = 'products';
   private readonly apiService = inject(ApiService);
   private readonly storageService = inject(StorageService);
+  private readonly loadingSubject = new BehaviorSubject<boolean>(true);
+  private readonly syncErrorSubject = new BehaviorSubject<string | null>(null);
   private readonly productsSubject = new BehaviorSubject<Product[]>([
     {
       id: 1,
@@ -61,13 +74,15 @@ export class ProductService {
   ]);
 
   private idCounter = this.productsSubject.value.length + 1;
+  private syncing = false;
 
   readonly products$ = this.productsSubject.asObservable();
   readonly offline$ = this.apiService.offlineFallback$.asObservable();
+  readonly loading$ = this.loadingSubject.asObservable();
+  readonly syncError$ = this.syncErrorSubject.asObservable();
 
   constructor() {
-    void this.hydrateFromStorage();
-    this.syncWithApi().subscribe();
+    this.initialize();
   }
 
   addProduct(input: CreateProductInput): Observable<Product> {
@@ -96,6 +111,13 @@ export class ProductService {
   }
 
   syncWithApi(): Observable<Product[]> {
+    if (this.syncing) {
+      return of(this.productsSubject.value);
+    }
+
+    this.syncing = true;
+    this.syncErrorSubject.next(null);
+
     return this.apiService.fetchProducts().pipe(
       tap((products) => {
         if (products.length) {
@@ -103,7 +125,24 @@ export class ProductService {
           this.idCounter = products.length + 1;
           this.persist();
         }
+      }),
+      catchError((error) => {
+        this.syncErrorSubject.next(
+          'No pudimos sincronizar con el servidor. Mostramos los datos locales mientras tanto.'
+        );
+        return throwError(() => error);
+      }),
+      finalize(() => {
+        this.syncing = false;
       })
+    );
+  }
+
+  refreshFromApi(): Observable<Product[]> {
+    this.loadingSubject.next(true);
+
+    return this.syncWithApi().pipe(
+      finalize(() => this.loadingSubject.next(false))
     );
   }
 
@@ -159,6 +198,24 @@ export class ProductService {
 
   private updateProducts(updated: Product[]): void {
     this.productsSubject.next(updated);
+  }
+
+  private initialize(): void {
+    this.loadingSubject.next(true);
+
+    from(this.hydrateFromStorage())
+      .pipe(
+        switchMap(() => this.syncWithApi()),
+        finalize(() => this.loadingSubject.next(false))
+      )
+      .subscribe({
+        error: (error) => {
+          console.error('Error sincronizando productos', error);
+          this.syncErrorSubject.next(
+            'No pudimos sincronizar con el servidor. Mostramos los datos locales mientras tanto.'
+          );
+        },
+      });
   }
 
   private generateEcoScore(category: string): number {

@@ -13,10 +13,20 @@
 </ion-header>
 
 <ion-content class="ion-padding lista-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshProducts($event)">
+    <ion-refresher-content pullingText="Desliza para sincronizar"></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-progress-bar *ngIf="loading$ | async" type="indeterminate" color="success"></ion-progress-bar>
+
   <ion-chip color="warning" *ngIf="offline$ | async" class="ion-margin-bottom">
     <ion-icon name="cloud-offline" color="warning"></ion-icon>
     <ion-label>Modo offline: mostrando datos guardados.</ion-label>
   </ion-chip>
+
+  <ion-note color="warning" *ngIf="syncError$ | async as syncError" class="ion-margin-bottom">
+    {{ syncError }}
+  </ion-note>
 
   <ion-card *ngIf="(route.snapshot.queryParamMap.get('priority')) as priorityFilter">
     <ion-card-content>
@@ -88,9 +98,10 @@
             </ion-item>
         </ion-list>
 
-        <ion-button type="submit" expand="block" class="ion-margin-top">
-          <ion-icon slot="start" name="add-circle"></ion-icon>
-          Añadir a la EcoLista
+        <ion-button type="submit" expand="block" class="ion-margin-top" [disabled]="isSubmitting">
+          <ion-spinner slot="start" *ngIf="isSubmitting"></ion-spinner>
+          <ion-icon *ngIf="!isSubmitting" slot="start" name="add-circle"></ion-icon>
+          {{ isSubmitting ? 'Guardando...' : 'Añadir a la EcoLista' }}
         </ion-button>
       </form>
     </ion-card-content>

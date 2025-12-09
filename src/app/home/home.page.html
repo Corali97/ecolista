@@ -16,10 +16,20 @@
     <ion-refresher-content pullingText="Desliza para actualizar consejos"></ion-refresher-content>
   </ion-refresher>
 
+  <ion-progress-bar
+    *ngIf="(productLoading$ | async) || (tipsLoading$ | async)"
+    type="indeterminate"
+    color="success"
+  ></ion-progress-bar>
+
   <ion-chip color="warning" *ngIf="offline$ | async" class="ion-margin-bottom">
     <ion-icon name="cloud-offline" color="warning"></ion-icon>
     <ion-label>Conectividad limitada: usando datos guardados.</ion-label>
   </ion-chip>
+
+  <ion-note color="warning" *ngIf="syncError$ | async as syncError" class="ion-margin-bottom">
+    {{ syncError }}
+  </ion-note>
 
   <ion-card #welcomeCard>
     <ion-card-header>
@@ -36,7 +46,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="summary$ | async as summary">
+  <ion-card *ngIf="summary$ | async as summary; else summarySkeleton">
     <ion-card-header>
       <ion-card-title>Resumen rápido</ion-card-title>
     </ion-card-header>
@@ -58,7 +68,22 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card class="alerts-card" *ngIf="nearExpiry$ | async as alerts">
+  <ng-template #summarySkeleton>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Resumen rápido</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="summary-grid">
+          <ion-skeleton-text animated style="width: 60px; height: 24px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60px; height: 24px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60px; height: 24px"></ion-skeleton-text>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+
+  <ion-card class="alerts-card" *ngIf="nearExpiry$ | async as alerts; else loadingAlerts">
     <ion-card-header>
       <ion-card-title>Recomendaciones sostenibles</ion-card-title>
       <ion-card-subtitle>Prioriza estos alimentos para evitar desperdicios.</ion-card-subtitle>
@@ -83,6 +108,19 @@
     </ion-card-content>
   </ion-card>
 
+  <ng-template #loadingAlerts>
+    <ion-card class="alerts-card">
+      <ion-card-header>
+        <ion-card-title>Recomendaciones sostenibles</ion-card-title>
+        <ion-card-subtitle>Sincronizando tu inventario...</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-skeleton-text animated style="width: 100%; height: 56px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 56px"></ion-skeleton-text>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+
   <ion-card *ngIf="tips$ | async as tips">
     <ion-card-header>
       <ion-card-title>Consejos EcoLista</ion-card-title>
@@ -93,15 +131,21 @@
         <ion-icon name="cloud-offline-outline"></ion-icon>
         <ion-label>Cache local</ion-label>
       </ion-chip>
-      <ion-list *ngIf="tips.tips.length; else emptyTips" lines="none">
-        <ion-item *ngFor="let tip of tips.tips">
-          <ion-icon name="leaf-outline" slot="start"></ion-icon>
-          <ion-label>
-            <h3>{{ tip.author }}</h3>
-            <p>{{ tip.quote }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+      <ng-container *ngIf="tipsLoading$ | async as tipsLoading">
+        <div class="tips-loading" *ngIf="tipsLoading">
+          <ion-spinner name="crescent" color="success"></ion-spinner>
+          <p>Obteniendo consejos sostenibles...</p>
+        </div>
+        <ion-list *ngIf="!tipsLoading && tips.tips.length; else emptyTips" lines="none">
+          <ion-item *ngFor="let tip of tips.tips">
+            <ion-icon name="leaf-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>{{ tip.author }}</h3>
+              <p>{{ tip.quote }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ng-container>
       <ng-template #emptyTips>
         <p class="empty-state">Aún no hay consejos guardados. Refresca para intentarlo de nuevo.</p>
       </ng-template>

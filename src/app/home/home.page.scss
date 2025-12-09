@@ -38,6 +38,13 @@
   gap: 0.75rem;
 }
 
+.tips-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ion-color-medium);
+}
+
 @media (min-width: 576px) {
   .actions-card .actions {
     flex-direction: row;
