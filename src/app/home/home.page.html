@@ -31,7 +31,7 @@
     {{ syncError }}
   </ion-note>
 
-  <ion-card #welcomeCard>
+  <ion-card #welcomeCard class="highlight-card">
     <ion-card-header>
       <ion-card-title>Bienvenida/o a tu compra consciente</ion-card-title>
       <ion-card-subtitle>
@@ -46,7 +46,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="summary$ | async as summary; else summarySkeleton">
+  <ion-card class="section-card" *ngIf="summary$ | async as summary; else summarySkeleton">
     <ion-card-header>
       <ion-card-title>Resumen rápido</ion-card-title>
     </ion-card-header>
@@ -69,7 +69,7 @@
   </ion-card>
 
   <ng-template #summarySkeleton>
-    <ion-card>
+    <ion-card class="section-card">
       <ion-card-header>
         <ion-card-title>Resumen rápido</ion-card-title>
       </ion-card-header>
@@ -83,7 +83,7 @@
     </ion-card>
   </ng-template>
 
-  <ion-card class="alerts-card" *ngIf="nearExpiry$ | async as alerts; else loadingAlerts">
+  <ion-card class="alerts-card section-card" *ngIf="nearExpiry$ | async as alerts; else loadingAlerts">
     <ion-card-header>
       <ion-card-title>Recomendaciones sostenibles</ion-card-title>
       <ion-card-subtitle>Prioriza estos alimentos para evitar desperdicios.</ion-card-subtitle>
@@ -109,7 +109,7 @@
   </ion-card>
 
   <ng-template #loadingAlerts>
-    <ion-card class="alerts-card">
+    <ion-card class="alerts-card section-card">
       <ion-card-header>
         <ion-card-title>Recomendaciones sostenibles</ion-card-title>
         <ion-card-subtitle>Sincronizando tu inventario...</ion-card-subtitle>
@@ -121,7 +121,7 @@
     </ion-card>
   </ng-template>
 
-  <ion-card *ngIf="tips$ | async as tips">
+  <ion-card class="section-card" *ngIf="tips$ | async as tips">
     <ion-card-header>
       <ion-card-title>Consejos EcoLista</ion-card-title>
       <ion-card-subtitle>{{ tips.message }}</ion-card-subtitle>
@@ -152,7 +152,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card class="actions-card">
+  <ion-card class="actions-card section-card">
     <ion-card-header>
       <ion-card-title>Acciones rápidas</ion-card-title>
     </ion-card-header>

@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.ecolista.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>EcoLista</name>
+  <description>Aplicación móvil de consumo responsable con builds configurados para Android, iOS y web móvil.</description>
+  <author email="publicaciones@ecolista.app">Equipo EcoLista</author>
+  <preference name="AndroidMinSdkVersion" value="24" />
+  <preference name="android-targetSdkVersion" value="34" />
+  <preference name="Orientation" value="portrait" />
+  <preference name="BackupWebStorage" value="none" />
+  <platform name="android">
+    <allow-intent href="market:*" />
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+      <application android:usesCleartextTraffic="false" />
+    </edit-config>
+  </platform>
+  <platform name="ios">
+    <preference name="SwiftVersion" value="5" />
+    <allow-intent href="itms:*" />
+    <allow-intent href="itms-apps:*" />
+  </platform>
+  <platform name="browser">
+    <preference name="Scheme" value="https" />
+  </platform>
+</widget>

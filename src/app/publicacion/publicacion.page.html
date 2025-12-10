@@ -1,0 +1,193 @@
+<ion-header>
+  <ion-toolbar color="primary">
+<<<<<<< ours
+    <ion-title>Validación de publicación</ion-title>
+=======
+    <ion-title>Publicar aplicación</ion-title>
+>>>>>>> theirs
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+<<<<<<< ours
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Configuración detectada</ion-card-title>
+      <ion-card-subtitle>Plataforma: {{ detectedPlatform | uppercase }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Los valores iniciales respetan la configuración de {{ platformConfig.appName }} para {{ detectedPlatform }}.</p>
+      <p class="hint">Puedes ajustar cualquier campo antes de validar.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <ion-list lines="full">
+      <ion-item>
+        <ion-label position="stacked">ID de paquete</ion-label>
+        <ion-input formControlName="packageId" placeholder="com.ejemplo.app"></ion-input>
+        <ion-note color="danger" *ngIf="packageIdControl?.invalid && packageIdControl.touched">
+          Usa el formato de dominio invertido (com.empresa.app).
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Nombre de la app</ion-label>
+        <ion-input formControlName="appName" placeholder="EcoLista"></ion-input>
+        <ion-note color="danger" *ngIf="appNameControl?.invalid && appNameControl.touched">
+          Ingrese un nombre de al menos 3 caracteres.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Versión (semántica)</ion-label>
+        <ion-input formControlName="versionName" placeholder="1.0.0"></ion-input>
+        <ion-note color="danger" *ngIf="versionNameControl?.invalid && versionNameControl.touched">
+          Use el formato mayor.menor.parche.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Código de versión</ion-label>
+        <ion-input type="number" formControlName="versionCode" min="1"></ion-input>
+        <ion-note color="danger" *ngIf="versionCodeControl?.invalid && versionCodeControl.touched">
+          Defina un número entero mayor a cero.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Correo del desarrollador</ion-label>
+        <ion-input formControlName="developerEmail" placeholder="publicaciones@ecolista.app"></ion-input>
+        <ion-note color="danger" *ngIf="developerEmailControl?.invalid && developerEmailControl.touched">
+          Correo no válido.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">minSdkVersion</ion-label>
+        <ion-input type="number" formControlName="minSdkVersion" min="21"></ion-input>
+        <ion-note color="danger" *ngIf="minSdkControl?.invalid && minSdkControl.touched">
+          Debe ser 21 o superior.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">targetSdkVersion</ion-label>
+        <ion-input type="number" formControlName="targetSdkVersion" min="21"></ion-input>
+        <ion-note color="danger" *ngIf="targetSdkControl?.invalid && targetSdkControl.touched">
+          Debe ser 21 o superior.
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo de entrega</ion-label>
+        <ion-segment formControlName="buildType">
+          <ion-segment-button value="apk">APK sin firmar</ion-segment-button>
+          <ion-segment-button value="bundle">App Bundle</ion-segment-button>
+        </ion-segment>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Notas para revisión</ion-label>
+        <ion-textarea
+          formControlName="notes"
+          auto-grow="true"
+          placeholder="Describe cambios, requerimientos de firma o pasos de despliegue."
+        ></ion-textarea>
+        <ion-note color="danger" *ngIf="notesControl?.invalid && notesControl.touched">
+          Incluye un detalle breve para el equipo de publicación.
+        </ion-note>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" type="submit" [disabled]="form.invalid">Validar configuración</ion-button>
+  </form>
+
+  <ion-card *ngIf="submissionPreview" class="summary-card">
+    <ion-card-header>
+      <ion-card-title>Resumen validado</ion-card-title>
+      <ion-card-subtitle>{{ submissionPreview?.appName }} ({{ submissionPreview?.packageId }})</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label>minSdkVersion</ion-label>
+          <ion-note>{{ form.value.minSdkVersion }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>targetSdkVersion</ion-label>
+          <ion-note>{{ form.value.targetSdkVersion }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Build</ion-label>
+          <ion-note>{{ form.value.buildType === 'bundle' ? 'App Bundle' : 'APK sin firmar' }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Salida</ion-label>
+          <ion-note>{{ submissionPreview?.packaging.outputDirectory }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Notas</ion-label>
+          <ion-note>{{ form.value.notes }}</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+=======
+  <form [formGroup]="publicationForm" (ngSubmit)="submit()" novalidate>
+    <ion-list lines="full">
+      <ion-item>
+        <ion-label position="stacked">ID del paquete</ion-label>
+        <ion-input
+          type="text"
+          autocomplete="off"
+          formControlName="packageId"
+          placeholder="com.empresa.app"
+        ></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="publicationForm.controls.packageId.touched && publicationForm.controls.packageId.invalid">
+        Introduce un identificador de paquete válido.
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="stacked">Nombre de la app</ion-label>
+        <ion-input type="text" formControlName="appName" placeholder="EcoLista"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="publicationForm.controls.appName.touched && publicationForm.controls.appName.invalid">
+        Necesitas al menos 3 caracteres.
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="stacked">Correo del desarrollador</ion-label>
+        <ion-input type="email" formControlName="developerEmail" placeholder="dev@example.com"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="publicationForm.controls.developerEmail.touched && publicationForm.controls.developerEmail.invalid">
+        Proporciona un correo electrónico válido.
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="stacked">SDK mínimo</ion-label>
+        <ion-input type="number" formControlName="minSdkVersion"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">SDK objetivo</ion-label>
+        <ion-input type="number" formControlName="targetSdkVersion"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Notas</ion-label>
+        <ion-textarea
+          formControlName="notes"
+          auto-grow="true"
+          placeholder="Información importante para la publicación"
+        ></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <ion-button type="submit" expand="block" color="success" class="ion-margin-top">
+      Revisar publicación
+    </ion-button>
+  </form>
+>>>>>>> theirs
+</ion-content>

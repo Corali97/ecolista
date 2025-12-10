@@ -1,0 +1,24 @@
+<<<<<<< ours
+.summary-card {
+  margin-top: 24px;
+}
+
+.hint {
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+ion-note {
+  font-size: 0.9rem;
+=======
+ion-note {
+  display: block;
+  margin: 4px 0 12px;
+}
+
+ion-textarea,
+ion-input {
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+>>>>>>> theirs
+}

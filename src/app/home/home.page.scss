@@ -1,7 +1,45 @@
 .home-content {
+  --background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+    url('/assets/fruit-pattern.svg');
+  background-size: 100% 100%, 360px 360px;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed, fixed;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  --background: radial-gradient(circle at 12% 20%, rgba(59, 228, 165, 0.12), transparent 32%),
+    radial-gradient(circle at 82% 18%, rgba(132, 91, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f2f6f8 50%, #eef5f2 100%);
+  padding-bottom: 2rem;
+}
+
+ion-card {
+  border-radius: 18px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.08);
+  backdrop-filter: blur(3px);
+}
+
+.section-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+  ion-card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+}
+
+.highlight-card {
+  background: linear-gradient(135deg, rgba(var(--ion-color-success-rgb), 0.16), rgba(var(--ion-color-primary-rgb), 0.14));
+  color: #0e3d2b;
+
+  ion-card-title,
+  ion-card-subtitle {
+    color: inherit;
+  }
+
+  ion-button {
+    margin-top: 0.25rem;
+    --box-shadow: 0 10px 25px rgba(var(--ion-color-success-rgb), 0.35);
+  }
 }
 
 .summary-grid {
@@ -9,6 +47,14 @@
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
   text-align: center;
+  padding: 0.5rem 0;
+
+  div {
+    background: rgba(var(--ion-color-success-rgb), 0.06);
+    border-radius: 14px;
+    padding: 0.75rem 0.5rem;
+    border: 1px solid rgba(var(--ion-color-success-rgb), 0.15);
+  }
 
   h3 {
     margin: 0;
@@ -28,6 +74,10 @@
   --background: rgba(var(--ion-color-warning-rgb), 0.08);
 }
 
+.alerts-card ion-card-subtitle {
+  color: var(--ion-color-medium);
+}
+
 .cache-chip {
   margin-bottom: 0.5rem;
 }
@@ -38,10 +88,22 @@
   gap: 0.75rem;
 }
 
+.actions-card ion-button {
+  --box-shadow: 0 10px 22px rgba(var(--ion-color-primary-rgb), 0.16);
+}
+
 .tips-loading {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  color: var(--ion-color-medium);
+}
+
+.home-content ::ng-deep ion-card-title {
+  font-weight: 700;
+}
+
+.home-content ::ng-deep ion-card-subtitle {
   color: var(--ion-color-medium);
 }
 

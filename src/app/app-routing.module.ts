@@ -34,6 +34,11 @@ const routes: Routes = [
     loadChildren: () => import('./perfil/perfil.module').then((m) => m.PerfilPageModule),
   },
   {
+    path: 'publicacion',
+    canActivate: [authGuard],
+    loadChildren: () => import('./publicacion/publicacion.module').then((m) => m.PublicacionPageModule),
+  },
+  {
     path: 'offline',
     loadChildren: () => import('./offline/offline.module').then((m) => m.OfflinePageModule),
   },
