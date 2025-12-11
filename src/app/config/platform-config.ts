@@ -1,9 +1,5 @@
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
 import { InjectionToken } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { IonicConfig } from '@ionic/angular';
 
 export type PlatformTarget = 'android' | 'ios' | 'webmobile';
 
@@ -15,7 +11,7 @@ export interface PlatformPackaging {
 
 export interface PlatformConfig {
   readonly platform: PlatformTarget;
-  readonly ionicConfig: IonicConfig;
+  readonly ionicConfig: Record<string, any>; // ← reemplazo seguro
   readonly minSdkVersion: number;
   readonly targetSdkVersion: number;
   readonly packageId: string;
@@ -45,8 +41,9 @@ const PLATFORM_CONFIGS: Record<PlatformTarget, PlatformConfig> = {
       appBundleTask: 'bundleRelease',
       outputDirectory: 'android/app/build/outputs',
     },
-    notes: 'Build de producción optimizado para Google Play con firma externa.',
+    notes: 'Build de producción optimizado para Google Play.',
   },
+
   ios: {
     platform: 'ios',
     ionicConfig: {
@@ -64,8 +61,9 @@ const PLATFORM_CONFIGS: Record<PlatformTarget, PlatformConfig> = {
       appBundleTask: 'archive',
       outputDirectory: 'ios/App/App.xcarchive',
     },
-    notes: 'Proyecto preparado para distribución en App Store Connect mediante Xcode.',
+    notes: 'Build para App Store (Xcode & Transporter).',
   },
+
   webmobile: {
     platform: 'webmobile',
     ionicConfig: {
@@ -83,20 +81,15 @@ const PLATFORM_CONFIGS: Record<PlatformTarget, PlatformConfig> = {
       appBundleTask: 'ng build --configuration production',
       outputDirectory: 'www',
     },
-    notes: 'Distribución PWA lista para ser servida desde hosting estático.',
+    notes: 'Distribución PWA lista para hosting estático.',
   },
 };
 
 export function resolvePlatformTarget(): PlatformTarget {
   const platform = Capacitor.getPlatform();
 
-  if (platform === 'android') {
-    return 'android';
-  }
-
-  if (platform === 'ios') {
-    return 'ios';
-  }
+  if (platform === 'android') return 'android';
+  if (platform === 'ios') return 'ios';
 
   return 'webmobile';
 }
@@ -104,36 +97,3 @@ export function resolvePlatformTarget(): PlatformTarget {
 export function resolvePlatformConfig(): PlatformConfig {
   return PLATFORM_CONFIGS[resolvePlatformTarget()];
 }
-
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-import type { IonicConfig } from '@ionic/core';
-
-export interface PlatformConfig extends IonicConfig {
-  packageId: string;
-  appName: string;
-  developerEmail: string;
-  minSdkVersion: number;
-  targetSdkVersion: number;
-  notes: string;
-}
-
-export const DEFAULT_PLATFORM_CONFIG: PlatformConfig = {
-  mode: 'md',
-  packageId: 'com.example.app',
-  appName: 'EcoLista',
-  developerEmail: 'dev@example.com',
-  minSdkVersion: 24,
-  targetSdkVersion: 34,
-  notes: 'Describe the main purpose and any store listing notes here.',
-};
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs

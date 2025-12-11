@@ -1,25 +1,10 @@
 <ion-header>
   <ion-toolbar color="primary">
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
     <ion-title>Validación de publicación</ion-title>
-=======
-    <ion-title>Publicar aplicación</ion-title>
->>>>>>> theirs
-=======
-    <ion-title>Publicar aplicación</ion-title>
->>>>>>> theirs
-=======
-    <ion-title>Publicar aplicación</ion-title>
->>>>>>> theirs
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
   <ion-card>
     <ion-card-header>
       <ion-card-title>Configuración detectada</ion-card-title>
@@ -143,71 +128,4 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-  <form [formGroup]="publicationForm" (ngSubmit)="submit()" novalidate>
-    <ion-list lines="full">
-      <ion-item>
-        <ion-label position="stacked">ID del paquete</ion-label>
-        <ion-input
-          type="text"
-          autocomplete="off"
-          formControlName="packageId"
-          placeholder="com.empresa.app"
-        ></ion-input>
-      </ion-item>
-      <ion-note color="danger" *ngIf="publicationForm.controls.packageId.touched && publicationForm.controls.packageId.invalid">
-        Introduce un identificador de paquete válido.
-      </ion-note>
-
-      <ion-item>
-        <ion-label position="stacked">Nombre de la app</ion-label>
-        <ion-input type="text" formControlName="appName" placeholder="EcoLista"></ion-input>
-      </ion-item>
-      <ion-note color="danger" *ngIf="publicationForm.controls.appName.touched && publicationForm.controls.appName.invalid">
-        Necesitas al menos 3 caracteres.
-      </ion-note>
-
-      <ion-item>
-        <ion-label position="stacked">Correo del desarrollador</ion-label>
-        <ion-input type="email" formControlName="developerEmail" placeholder="dev@example.com"></ion-input>
-      </ion-item>
-      <ion-note color="danger" *ngIf="publicationForm.controls.developerEmail.touched && publicationForm.controls.developerEmail.invalid">
-        Proporciona un correo electrónico válido.
-      </ion-note>
-
-      <ion-item>
-        <ion-label position="stacked">SDK mínimo</ion-label>
-        <ion-input type="number" formControlName="minSdkVersion"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="stacked">SDK objetivo</ion-label>
-        <ion-input type="number" formControlName="targetSdkVersion"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="stacked">Notas</ion-label>
-        <ion-textarea
-          formControlName="notes"
-          auto-grow="true"
-          placeholder="Información importante para la publicación"
-        ></ion-textarea>
-      </ion-item>
-    </ion-list>
-
-    <ion-button type="submit" expand="block" color="success" class="ion-margin-top">
-      Revisar publicación
-    </ion-button>
-  </form>
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 </ion-content>
