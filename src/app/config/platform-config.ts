@@ -1,4 +1,6 @@
 <<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 import { InjectionToken } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { IonicConfig } from '@ionic/angular';
@@ -104,6 +106,10 @@ export function resolvePlatformConfig(): PlatformConfig {
 }
 
 =======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
 import type { IonicConfig } from '@ionic/core';
 
 export interface PlatformConfig extends IonicConfig {
@@ -124,4 +130,10 @@ export const DEFAULT_PLATFORM_CONFIG: PlatformConfig = {
   targetSdkVersion: 34,
   notes: 'Describe the main purpose and any store listing notes here.',
 };
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
 >>>>>>> theirs

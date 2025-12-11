@@ -1,4 +1,6 @@
 <<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
@@ -9,18 +11,30 @@ import {
   resolvePlatformTarget,
 } from '../config/platform-config';
 =======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { DEFAULT_PLATFORM_CONFIG, PlatformConfig } from '../config/platform-config';
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 
 @Component({
   selector: 'app-publicacion',
   templateUrl: './publicacion.page.html',
   styleUrls: ['./publicacion.page.scss'],
+<<<<<<< ours
+<<<<<<< ours
 <<<<<<< ours
 })
 export class PublicacionPage implements OnInit {
@@ -114,6 +128,10 @@ export class PublicacionPage implements OnInit {
   get notesControl() {
     return this.form.get('notes');
 =======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
   standalone: true,
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
 })
@@ -139,6 +157,12 @@ export class PublicacionPage {
 
     const payload = this.publicationForm.getRawValue();
     console.info('Publication payload ready to send', payload);
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
 >>>>>>> theirs
   }
 }
